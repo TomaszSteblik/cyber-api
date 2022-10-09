@@ -22,7 +22,7 @@ jobs:
 
   build-docker:
     docker:
-      - image: docker
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
     steps:
         - checkout
         - run: |
