@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  azure-cli: circleci/azure-cli@1.2.2
 
 jobs:
   build:
@@ -20,7 +22,7 @@ jobs:
       - store_test_results:
           path: rpg-v2_tests/TestResults/TestResults.trx
 
-  build-docker:
+  build-dockerhub:
     docker:
       - image: cimg/base:2022.06
         auth:
@@ -37,14 +39,26 @@ jobs:
       - run: |
           docker push braght/cyber-api
 
+  example-job:
+    docker:
+      # replace with your preferred image
+      - image: cimg/base:stable
+    steps:
+      - azure-cli/install
+      - azure-cli/login-with-user:
+          azure-password: AZURE_PASSWORD
+          azure-username: AZURE_LOGIN
+
 workflows:
   build-test-release:
     jobs:
       - build
+      - example-job:
+          context: AZURE
       - test:
           requires:
             - build
-      - build-docker:
+      - build-dockerhub:
           context: DOCKER
           requires:
             - test
