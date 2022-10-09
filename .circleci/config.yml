@@ -33,6 +33,8 @@ jobs:
       - checkout
       - run: |
           docker build -t cyber-api .
+      - run: |
+          docker push braght/cyber-api
 
 workflows:
   build-test-release:
