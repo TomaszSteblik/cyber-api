@@ -35,7 +35,7 @@ jobs:
       - run: |
           docker build -t braght/cyber-api .
       - run: |
-         echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
+          echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
       - run: |
           docker push braght/cyber-api
 
@@ -45,9 +45,8 @@ jobs:
       - image: cimg/base:stable
     steps:
       - azure-cli/install
-      - azure-cli/login-with-user:
-          azure-password: AZURE_PASSWORD
-          azure-username: AZURE_LOGIN
+      - run: |
+          az login -u $AZURE_USERNAME -p $AZURE_PASSWORD
 
 workflows:
   build-test-release:
