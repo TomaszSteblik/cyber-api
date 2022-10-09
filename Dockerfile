@@ -4,10 +4,10 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-WORKDIR /src
-COPY ["Cyber.Api/Cyber.Api.csproj", "Cyber.Api/"]
-RUN dotnet restore "Cyber.Api/Cyber.Api.csproj"
+WORKDIR src
 COPY . .
+RUN ls
+RUN dotnet restore "Cyber.Api/Cyber.Api.csproj"
 WORKDIR "/src/Cyber.Api"
 RUN dotnet build "Cyber.Api.csproj" -c Release -o /app/build
 
