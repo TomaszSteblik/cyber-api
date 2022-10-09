@@ -58,6 +58,10 @@ workflows:
           requires:
             - build
       - build-dockerhub:
+          filters:
+              branches:
+                only:
+                  - master
           context: DOCKER
           requires:
             - test
