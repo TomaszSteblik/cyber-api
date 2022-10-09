@@ -30,6 +30,7 @@ jobs:
       # ... steps for building/testing app ...
       - setup_remote_docker:
           version: 20.10.14
+      - checkout
       - run: |
           docker build -t cyber-api .
 
