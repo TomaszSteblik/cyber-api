@@ -15,9 +15,18 @@ jobs:
       - image: mcr.microsoft.com/dotnet/sdk:6.0
     steps:
       - checkout
-      - run:
-          name: "Build API"
-          command: dotnet test
+      - run: |
+          dotnet test --logger 'trx;LogFileName=TestResults.trx'
+      - store_test_results:
+          path: rpg-v2_tests/TestResults/TestResults.trx
+
+  build-docker:
+    docker:
+      - image: docker
+    steps:
+        - checkout
+        - run: |
+            docker build -t cyber-api .
 
 workflows:
   say-hello-workflow:
