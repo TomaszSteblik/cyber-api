@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Cyber.Application.Commands.AddUser;
 using Cyber.Application.Commands.ChangePassword;
+using Cyber.Application.Commands.DeleteUser;
 using Cyber.Application.Commands.UpdateUser;
 using Cyber.Application.DTOs.Create;
 using Cyber.Application.DTOs.Delete;
@@ -71,9 +72,13 @@ public class UsersController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteUser([FromBody] DeleteUserDto deleteUserDto)
     {
-        throw new NotImplementedException();
+        return Ok(await _mediator.Send(new DeleteUserCommand(deleteUserDto.UserId)));
     }
 
     [Authorize(Roles = "Admin")]

@@ -65,4 +65,10 @@ public class UsersRepository : IUsersRepository
                 .Take((requestPageIndex+1)*EntriesPerPage)
             );
     }
+
+    public Task Delete(Guid userUserId)
+    {
+        _users.Remove(_users.First(x => x.UserId == userUserId));
+        return Task.CompletedTask;
+    }
 }
