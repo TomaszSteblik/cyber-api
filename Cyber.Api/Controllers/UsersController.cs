@@ -41,6 +41,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
         var containsId = TryParse(User.Claims.First(x => x.Type == "UserId").Value, out var userId);
@@ -60,6 +61,9 @@ public class UsersController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<IEnumerable<GetUserDto>>> GetUsers(int pageIndex = 0)
     {
         return Ok(await _mediator.Send(new GetUsersQuery(pageIndex)));
@@ -74,9 +78,14 @@ public class UsersController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateUserDto)
     {
-        if (string.IsNullOrWhiteSpace(updateUserDto.Password))
+        if (updateUserDto.Password is not null)
             await _mediator.Send(new ChangePasswordCommand(updateUserDto.Password, updateUserDto.UserId));
         var updatedUser = await _mediator.Send(new UpdateUserInformationsCommand(
             updateUserDto.UserId,
