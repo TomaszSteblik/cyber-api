@@ -30,7 +30,7 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
         var oldPassword = user.Password;
         
         user.ChangePassword(request.NewPassword, _passwordPolicies, previousPasswords);
-        
+        //TODO: Think what to do about changing password by admin and by user here
         if (user.Role == UserRole.NewUser)
             user.Role = UserRole.User;
         

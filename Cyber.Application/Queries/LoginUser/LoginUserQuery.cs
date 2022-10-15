@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using MediatR;
 
-namespace Cyber.Application.Requests.LoginUser;
+namespace Cyber.Application.Queries.LoginUser;
 
 [Description("Request that returns JWT token for logged user")]
 public class LoginUserRequest : IRequest<string>

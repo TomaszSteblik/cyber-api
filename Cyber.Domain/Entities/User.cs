@@ -56,4 +56,19 @@ public class User
         if (MailAddress.TryCreate(Email, out _) is false)
             throw new InvalidUserDataException($"Invalid email");
     }
+
+    public void ChangeInformations(string? username, string? email, string? firstName, string? lastName)
+    {
+        if (username is not null)
+            Username = username;
+        
+        if (email is not null)
+            Email = email;
+        
+        if (firstName is not null)
+            FirstName = firstName;
+        
+        if (lastName is not null)
+            LastName = lastName;
+    }
 }
