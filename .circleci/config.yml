@@ -49,7 +49,7 @@ jobs:
           az login -u $AZURE_USERNAME -p $AZURE_PASSWORD
       - run: |
           az container create --resource-group cyber-rg --name cyber-api-container --image braght/cyber-api:latest --dns-name-label cyber-api --ports 80 \
-          --environment-variables 'Smtp__Host'=$Smtp__Host 'Smtp__Address'=$Smtp__Address 'Smtp__Port'=$Smtp__Port 'Smtp__Login'=$Smtp__Login 'Smtp_Password'=$Smtp_Password
+          --environment-variables 'Smtp__Host'=$Smtp__Host 'Smtp__Address'=$Smtp__Address 'Smtp__Port'=$Smtp__Port 'Smtp__Login'=$Smtp__Login 'Smtp__Password'=$Smtp_Password
 workflows:
   build-test-release:
     jobs:
