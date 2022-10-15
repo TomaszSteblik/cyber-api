@@ -1,4 +1,5 @@
 using Cyber.Application.Exceptions;
+using Cyber.Domain.Enums;
 using Cyber.Domain.Policies.PasswordPolicy;
 using Cyber.Domain.Repositories;
 using MediatR;
@@ -29,6 +30,10 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
         var oldPassword = user.Password;
         
         user.ChangePassword(request.NewPassword, _passwordPolicies, previousPasswords);
+        
+        if (user.Role == UserRole.NewUser)
+            user.Role = UserRole.User;
+        
         await _previousPasswordsRepository.AddPassword(oldPassword, user.UserId);
         await _usersRepository.Update(user);
         
