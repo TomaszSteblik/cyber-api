@@ -1,10 +1,13 @@
 using System.Security.Claims;
 using Cyber.Application.Commands.AddUser;
 using Cyber.Application.Commands.ChangePassword;
+using Cyber.Application.Commands.UpdateUser;
 using Cyber.Application.DTOs.Create;
+using Cyber.Application.DTOs.Delete;
 using Cyber.Application.DTOs.Read;
 using Cyber.Application.DTOs.Update;
-using Cyber.Application.Requests.LoginUser;
+using Cyber.Application.Queries.GetUsers;
+using Cyber.Application.Queries.LoginUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +18,11 @@ namespace Cyber.Api.Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class UserController : ControllerBase
+public class UsersController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public UserController(IMediator mediator)
+    public UsersController(IMediator mediator)
     {
         _mediator = mediator;
     }
@@ -54,4 +57,35 @@ public class UserController : ControllerBase
     {
         return Ok(await _mediator.Send(new AddUserCommand(addUserDto)));
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<GetUserDto>>> GetUsers(int pageIndex = 0)
+    {
+        return Ok(await _mediator.Send(new GetUsersQuery(pageIndex)));
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpDelete]
+    public async Task<IActionResult> DeleteUser([FromBody] DeleteUserDto deleteUserDto)
+    {
+        throw new NotImplementedException();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateUserDto)
+    {
+        if (string.IsNullOrWhiteSpace(updateUserDto.Password))
+            await _mediator.Send(new ChangePasswordCommand(updateUserDto.Password, updateUserDto.UserId));
+        var updatedUser = await _mediator.Send(new UpdateUserInformationsCommand(
+            updateUserDto.UserId,
+            updateUserDto.Username,
+            updateUserDto.FirstName,
+            updateUserDto.LastName,
+            updateUserDto.Email));
+        return Ok(updatedUser);
+    }
+    
+    
 }

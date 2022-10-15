@@ -8,4 +8,5 @@ public interface IUsersRepository
     Task<User?> GetUserById(Guid userId);
     Task<User> Update(User user);
     Task<User> Add(User user);
+    Task<IEnumerable<User>> GetUsersPage(int requestPageIndex);
 }

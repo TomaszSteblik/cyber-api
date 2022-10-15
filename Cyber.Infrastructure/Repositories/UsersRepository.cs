@@ -7,6 +7,7 @@ namespace Cyber.Infrastructure.Repositories;
 public class UsersRepository : IUsersRepository
 {
     private static List<User> _users;
+    private const int EntriesPerPage = 100;
 
     public UsersRepository()
     {
@@ -54,5 +55,14 @@ public class UsersRepository : IUsersRepository
     {
         _users.Add(user);
         return Task.FromResult(user);
+    }
+
+    public Task<IEnumerable<User>> GetUsersPage(int requestPageIndex)
+    {
+        return Task.FromResult(
+            _users
+                .Skip(requestPageIndex * EntriesPerPage)
+                .Take((requestPageIndex+1)*EntriesPerPage)
+            );
     }
 }

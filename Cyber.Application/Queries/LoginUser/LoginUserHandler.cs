@@ -3,7 +3,7 @@ using Cyber.Application.Services;
 using Cyber.Domain.Repositories;
 using MediatR;
 
-namespace Cyber.Application.Requests.LoginUser;
+namespace Cyber.Application.Queries.LoginUser;
 
 internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
 {
