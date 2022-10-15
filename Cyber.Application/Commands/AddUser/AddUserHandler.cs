@@ -31,7 +31,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, GetUserDto>
     {
         var generatedPassword = _passwordGenerationService.GeneratePassword();
         var user = new User(request.UserToAdd.Username, generatedPassword, request.UserToAdd.FirstName,
-            request.UserToAdd.LastName, request.UserToAdd.Email, UserRole.User);
+            request.UserToAdd.LastName, request.UserToAdd.Email, UserRole.NewUser);
         user.Validate();
         var addedUser = await _usersRepository.Add(user);
         var emailStatus = await _mailingService.SendPasswordMail(user, generatedPassword);
