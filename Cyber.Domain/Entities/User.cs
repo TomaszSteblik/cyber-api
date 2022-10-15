@@ -57,18 +57,18 @@ public class User
             throw new InvalidUserDataException($"Invalid email");
     }
 
-    public void ChangeInformations(string username, string email, string firstName, string lastName)
+    public void ChangeInformations(string? username, string? email, string? firstName, string? lastName)
     {
-        if (string.IsNullOrWhiteSpace(username) is false)
+        if (username is not null)
             Username = username;
         
-        if (string.IsNullOrWhiteSpace(email) is false)
+        if (email is not null)
             Email = email;
         
-        if (string.IsNullOrWhiteSpace(firstName) is false)
+        if (firstName is not null)
             FirstName = firstName;
         
-        if (string.IsNullOrWhiteSpace(lastName) is false)
+        if (lastName is not null)
             LastName = lastName;
     }
 }
