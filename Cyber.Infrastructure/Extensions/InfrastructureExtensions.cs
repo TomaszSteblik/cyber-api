@@ -1,5 +1,7 @@
 using Cyber.Application.Services;
 using Cyber.Domain.Repositories;
+using Cyber.Domain.Services;
+using Cyber.Infrastructure.Factories;
 using Cyber.Infrastructure.Middlewares;
 using Cyber.Infrastructure.Repositories;
 using Cyber.Infrastructure.Services;
@@ -15,6 +17,8 @@ public static class InfrastructureExtensions
         serviceCollection.AddSingleton<IUsersRepository, UsersRepository>();
         serviceCollection.AddTransient<ExceptionToHttpMiddleware>();
         serviceCollection.AddSingleton<IPreviousPasswordsRepository, PreviousPasswordsRepository>();
+        serviceCollection.AddScoped<IMailingService, MailingService>();
+        serviceCollection.AddScoped<IMailMessageFactory, MailMessageFactory>();
         return serviceCollection;
     }
 }
