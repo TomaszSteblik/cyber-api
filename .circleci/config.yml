@@ -1,0 +1,71 @@
+version: 2.1
+orbs:
+  azure-cli: circleci/azure-cli@1.2.2
+
+jobs:
+  build:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    steps:
+      - checkout
+      - run:
+          name: "Build API"
+          command: dotnet build
+
+  test:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    steps:
+      - checkout
+      - run: |
+          dotnet test --logger 'trx;LogFileName=TestResults.trx'
+      - store_test_results:
+          path: rpg-v2_tests/TestResults/TestResults.trx
+
+  build-dockerhub:
+    docker:
+      - image: cimg/base:2022.06
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+    steps:
+      - setup_remote_docker:
+          version: 20.10.14
+      - checkout
+      - run: |
+          docker build -t braght/cyber-api .
+      - run: |
+          echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
+      - run: |
+          docker push braght/cyber-api
+
+  azure-deploy:
+    docker:
+      # replace with your preferred image
+      - image: cimg/base:stable
+    steps:
+      - azure-cli/install
+      - run: |
+          az login -u $AZURE_USERNAME -p $AZURE_PASSWORD
+      - run: |
+          az container create --resource-group cyber-rg --name cyber-api-container --image braght/cyber-api:latest --dns-name-label cyber-api --ports 80 \
+          --environment-variables 'Smtp__Host'=$Smtp__Host 'Smtp__Address'=$Smtp__Address 'Smtp__Port'=$Smtp__Port 'Smtp__Login'=$Smtp__Login 'Smtp__Password'=$Smtp__Password
+workflows:
+  build-test-release:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - build-dockerhub:
+          filters:
+              branches:
+                only:
+                  - master
+          context: DOCKER
+          requires:
+            - test
+      - azure-deploy:
+          context: AZURE
+          requires:
+            - build-dockerhub
