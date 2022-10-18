@@ -33,7 +33,7 @@ jobs:
           version: 20.10.14
       - checkout
       - run: |
-          docker build -t braght/cyber-api .
+          docker build --platform linux/amd64,linux/arm64 -t braght/cyber-api .
       - run: |
           echo "$DOCKERHUB_PASSWORD" | docker login --username $DOCKERHUB_USERNAME --password-stdin
       - run: |
