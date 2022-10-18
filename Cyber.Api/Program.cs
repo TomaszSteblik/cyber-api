@@ -19,6 +19,8 @@ builder.Services.AddDomain();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
+builder.Services.AddCors();
+
 builder.Services.AddAuthentication(x =>
     {
         x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -78,7 +80,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseCors();
+app.UseCors(x => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod()).Build();
 
 app.UseMiddleware<ExceptionToHttpMiddleware>();
 
