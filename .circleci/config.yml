@@ -65,7 +65,3 @@ workflows:
           context: DOCKER
           requires:
             - test
-      - azure-deploy:
-          context: AZURE
-          requires:
-            - build-dockerhub
