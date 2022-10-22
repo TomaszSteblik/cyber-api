@@ -71,4 +71,14 @@ public class User
         if (lastName is not null)
             LastName = lastName;
     }
+
+    public void Block()
+    {
+        IsBlocked = true;
+    }
+
+    public void Unblock()
+    {
+        IsBlocked = false;
+    }
 }
