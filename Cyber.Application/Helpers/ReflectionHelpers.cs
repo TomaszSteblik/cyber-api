@@ -12,6 +12,6 @@ public static class ReflectionHelpers
             .SelectMany(assembly => assembly.GetTypes())
             .Where(type => typeof(IPasswordPolicy).IsAssignableFrom(type));
 
-        return policiesTypes.Select(type => type.Name).Where(x=>x != nameof(IPasswordPolicy));
+        return policiesTypes.Select(type => type.Name).Where(x => x != nameof(IPasswordPolicy));
     }
 }

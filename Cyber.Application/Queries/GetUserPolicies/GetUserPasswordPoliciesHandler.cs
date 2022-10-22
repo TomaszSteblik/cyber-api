@@ -13,7 +13,7 @@ internal class GetUserPasswordPoliciesHandler : IRequestHandler<GetUserPasswordP
     private readonly IPasswordPoliciesRepository _passwordPoliciesRepository;
     private readonly IUsersRepository _usersRepository;
 
-    public GetUserPasswordPoliciesHandler(IPasswordPoliciesRepository passwordPoliciesRepository, 
+    public GetUserPasswordPoliciesHandler(IPasswordPoliciesRepository passwordPoliciesRepository,
         IUsersRepository usersRepository)
     {
         _passwordPoliciesRepository = passwordPoliciesRepository;

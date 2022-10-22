@@ -10,7 +10,7 @@ internal class ChangePolicyStatusHandler : IRequestHandler<ChangePolicyStatusCom
     private readonly IPasswordPoliciesRepository _passwordPoliciesRepository;
     private readonly IUsersRepository _usersRepository;
 
-    public ChangePolicyStatusHandler(IPasswordPoliciesRepository passwordPoliciesRepository, 
+    public ChangePolicyStatusHandler(IPasswordPoliciesRepository passwordPoliciesRepository,
         IUsersRepository usersRepository)
     {
         _passwordPoliciesRepository = passwordPoliciesRepository;
@@ -25,7 +25,7 @@ internal class ChangePolicyStatusHandler : IRequestHandler<ChangePolicyStatusCom
 
         if (ReflectionHelpers.GetPasswordPoliciesNamesFromAssembly().Contains(request.Key) is false)
             throw new PasswordPolicyNotFoundException(request.Key);
-        
+
         await _passwordPoliciesRepository.SaveEnabledStatus(request.Key, request.Status, request.UserId);
         return Unit.Value;
     }
