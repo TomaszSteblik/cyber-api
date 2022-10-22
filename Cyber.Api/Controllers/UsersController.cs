@@ -103,7 +103,7 @@ public class UsersController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost]
+    [HttpPost("Block")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
