@@ -26,7 +26,7 @@ public class UsersRepository : IUsersRepository
                 "Rafał",
                 "Kulka",
                 "rk055918@student.ath.edu.pl",
-                UserRole.User){UserId = Guid.Parse("24acdd21-6a87-4b3c-9a28-f67d7f3dd0be")},
+                UserRole.PasswordChangeRequired){UserId = Guid.Parse("24acdd21-6a87-4b3c-9a28-f67d7f3dd0be")},
             new User("ADMIN",
                 "admin",
                 "Admin",

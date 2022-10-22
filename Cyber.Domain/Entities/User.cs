@@ -40,6 +40,9 @@ public class User
             throw new PasswordAlreadyUsedException(newPassword, UserId.ToString());
 
         Password = new UserPassword(newPassword);
+
+        if (Role == UserRole.PasswordChangeRequired)
+            Role = UserRole.User;
     }
 
     public void Validate()
