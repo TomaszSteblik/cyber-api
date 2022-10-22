@@ -112,6 +112,6 @@ public class UsersController : ControllerBase
     {
         return Ok(await _mediator.Send(new BlockUserCommand(blockUserDto.UserId, blockUserDto.Block)));
     }
-    
+
 
 }

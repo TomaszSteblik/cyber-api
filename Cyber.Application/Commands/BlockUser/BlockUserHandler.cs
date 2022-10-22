@@ -12,20 +12,20 @@ internal class BlockUserHandler : IRequestHandler<BlockUserCommand>
     {
         _usersRepository = usersRepository;
     }
-    
+
     public async Task<Unit> Handle(BlockUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _usersRepository.GetUserById(request.UserId);
         if (user is null)
             throw new UserNotFoundException(request.UserId);
-        
+
         if (request.Block)
             user.Block();
         else
             user.Unblock();
 
         await _usersRepository.Update(user);
-        
+
         return Unit.Value;
     }
 }
