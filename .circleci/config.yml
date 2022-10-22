@@ -50,10 +50,27 @@ jobs:
       - run: |
           az container create --resource-group cyber-rg --name cyber-api-container --image braght/cyber-api:latest --dns-name-label cyber-api --ports 80 \
           --environment-variables 'Smtp__Host'=$Smtp__Host 'Smtp__Address'=$Smtp__Address 'Smtp__Port'=$Smtp__Port 'Smtp__Login'=$Smtp__Login 'Smtp__Password'=$Smtp__Password
+
+  analyse-code:
+    docker:
+      - image: mcr.microsoft.com/dotnet/sdk:6.0
+    steps:
+      - checkout
+      - run: |
+          dotnet tool install --global dotnet-sonarscanner
+          dotnet tool install --global dotnet-coverage
+          export PATH="$PATH:/root/.dotnet/tools"
+          apt update -y
+          apt install openjdk-17-jdk -y
+          dotnet sonarscanner begin /k:"TomaszSteblik_cyber-api" /o:"tomaszsteblik" /d:sonar.login="$SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+          dotnet build
+          dotnet-coverage collect 'dotnet test' -f xml  -o 'coverage.xml'
+          dotnet sonarscanner end /d:sonar.login="$SONAR_TOKEN"
 workflows:
   build-test-release:
     jobs:
       - build
+      - analyse-code
       - test:
           requires:
             - build
