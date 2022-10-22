@@ -70,7 +70,8 @@ workflows:
   build-test-release:
     jobs:
       - build
-      - analyse-code
+      - analyse-code:
+          context: SonarCloud_CyberApi
       - test:
           requires:
             - build
