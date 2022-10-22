@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Cyber.Application.Commands.AddUser;
+using Cyber.Application.Commands.BlockUser;
 using Cyber.Application.Commands.ChangePassword;
 using Cyber.Application.Commands.DeleteUser;
 using Cyber.Application.Commands.UpdateUser;
@@ -57,7 +58,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> AddUser([FromBody] AddUserDto addUserDto)
     {
-        return Ok(await _mediator.Send(new AddUserCommand(addUserDto)));
+        return CreatedAtRoute(nameof(GetUsers), await _mediator.Send(new AddUserCommand(addUserDto)));
     }
 
     [Authorize(Roles = "Admin")]
@@ -101,5 +102,18 @@ public class UsersController : ControllerBase
         return Ok(updatedUser);
     }
 
+    [Authorize(Roles = "Admin")]
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> BlockUser([FromBody] BlockUserDto blockUserDto)
+    {
+        return Ok(await _mediator.Send(new BlockUserCommand(blockUserDto.UserId, blockUserDto.Block)));
+    }
 
+    //TODO:
+    //- waznosc hasla
+    //- wylaczyc polise per user
 }

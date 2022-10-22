@@ -40,6 +40,9 @@ public class User
             throw new PasswordAlreadyUsedException(newPassword, UserId.ToString());
 
         Password = new UserPassword(newPassword);
+
+        if (Role == UserRole.PasswordChangeRequired)
+            Role = UserRole.User;
     }
 
     public void Validate()
@@ -70,5 +73,15 @@ public class User
 
         if (lastName is not null)
             LastName = lastName;
+    }
+
+    public void Block()
+    {
+        IsBlocked = true;
+    }
+
+    public void Unblock()
+    {
+        IsBlocked = false;
     }
 }
