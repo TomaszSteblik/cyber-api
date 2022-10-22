@@ -20,7 +20,7 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
     {
         //find user by email
         var user = await _usersRepository.GetUserByEmail(request.Login);
-        if(user is null)
+        if (user is null)
             throw new IncorrectCredentialsException($"login: {request.Login}");
         //check if user password matches hashed pass
         if (user.Password.IsMatch(request.Password) is false)

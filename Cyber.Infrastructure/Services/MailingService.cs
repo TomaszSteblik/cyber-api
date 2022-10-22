@@ -14,7 +14,7 @@ public class MailingService : IMailingService
     private readonly string _senderMailAddress;
     private readonly string _senderPassword;
     private readonly string _senderUsername;
-    
+
     public MailingService(IConfiguration configuration, IMailMessageFactory messageFactory)
     {
         _messageFactory = messageFactory;

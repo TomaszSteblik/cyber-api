@@ -9,6 +9,6 @@ public abstract class DomainException : SystemException
 
     public DomainException(string message) : base(message)
     {
-        
+
     }
 }

@@ -13,7 +13,7 @@ public class UserPassword
         Password = HashPassword(Salt, plainPassword);
     }
 
-    public bool IsMatch(string password) => 
+    public bool IsMatch(string password) =>
         string.Compare(Password, HashPassword(Salt, password), StringComparison.InvariantCulture) == 0;
 
     private static string HashPassword(string saltString, string password)

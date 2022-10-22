@@ -14,18 +14,18 @@ public class UsersRepository : IUsersRepository
         _users = new List<User>
         {
             new User(
-                "tsteblik", 
+                "tsteblik",
                 "silnehaslo",
                 "Tomasz",
                 "Steblik",
-                "ts055953@student.ath.edu.pl", 
+                "ts055953@student.ath.edu.pl",
                 UserRole.User){UserId = Guid.Parse("7842869e-0d45-4880-a42a-52c91946ed0c")},
             new User(
                 "rkulka",
                 "slabehaslo",
                 "Rafał",
                 "Kulka",
-                "rk055918@student.ath.edu.pl", 
+                "rk055918@student.ath.edu.pl",
                 UserRole.User){UserId = Guid.Parse("24acdd21-6a87-4b3c-9a28-f67d7f3dd0be")},
             new User("ADMIN",
                 "admin",
@@ -35,7 +35,7 @@ public class UsersRepository : IUsersRepository
                 UserRole.Admin){UserId = Guid.Parse("3620194c-b1e0-4390-8272-9e4595b0856c")}
         };
     }
-    
+
     public Task<User?> GetUserByEmail(string email)
     {
         return Task.FromResult(_users.FirstOrDefault(x => x.Email == email));
@@ -62,7 +62,7 @@ public class UsersRepository : IUsersRepository
         return Task.FromResult(
             _users
                 .Skip(requestPageIndex * EntriesPerPage)
-                .Take((requestPageIndex+1)*EntriesPerPage)
+                .Take((requestPageIndex + 1) * EntriesPerPage)
             );
     }
 
