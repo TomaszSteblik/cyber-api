@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using Cyber.Application.Commands.AddUser;
 using Cyber.Application.Commands.BlockUser;
 using Cyber.Application.Commands.ChangePassword;
@@ -110,10 +109,20 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> BlockUser([FromBody] BlockUserDto blockUserDto)
     {
-        return Ok(await _mediator.Send(new BlockUserCommand(blockUserDto.UserId, blockUserDto.Block)));
+        return Ok(await _mediator.Send(new BlockUserCommand(blockUserDto.UserId, true)));
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("Unlock")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UnlockUser([FromBody] BlockUserDto blockUserDto)
+    {
+        return Ok(await _mediator.Send(new BlockUserCommand(blockUserDto.UserId, false)));
     }
 
     //TODO:
     //- waznosc hasla
-    //- wylaczyc polise per user
 }

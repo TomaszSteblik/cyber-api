@@ -29,11 +29,12 @@ public class User
         Role = role;
     }
 
-    public void ChangePassword(string newPassword, IEnumerable<IPasswordPolicy> passwordPolicies, IEnumerable<UserPassword> previousPasswords)
+    public async Task ChangePassword(string newPassword, IEnumerable<IPasswordPolicy> passwordPolicies, IEnumerable<UserPassword> previousPasswords)
     {
-        foreach (var passwordPolicy in passwordPolicies.Where(policy => policy.IsEnabled))
+        foreach (var passwordPolicy in passwordPolicies)
         {
-            passwordPolicy.CheckPassword(newPassword);
+            if (await passwordPolicy.IsEnabledForUser(UserId))
+                passwordPolicy.CheckPassword(newPassword);
         }
 
         if (previousPasswords.Any(x => x.IsMatch(newPassword)))
