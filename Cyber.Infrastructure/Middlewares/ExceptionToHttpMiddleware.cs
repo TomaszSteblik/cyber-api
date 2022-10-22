@@ -10,9 +10,9 @@ public class ExceptionToHttpMiddleware : IMiddleware
 {
     public ExceptionToHttpMiddleware()
     {
-        
+
     }
-    
+
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         try
@@ -21,7 +21,7 @@ public class ExceptionToHttpMiddleware : IMiddleware
         }
         catch (DomainException e)
         {
-            context.Response.StatusCode = (int) e.StatusCode;
+            context.Response.StatusCode = (int)e.StatusCode;
             var messageObject = new
             {
                 e.ErrorCode,
@@ -31,7 +31,7 @@ public class ExceptionToHttpMiddleware : IMiddleware
         }
         catch (ApplicationException e)
         {
-            context.Response.StatusCode = (int) e.StatusCode;
+            context.Response.StatusCode = (int)e.StatusCode;
             var messageObject = new
             {
                 e.ErrorCode,

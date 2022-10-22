@@ -100,6 +100,6 @@ public class UsersController : ControllerBase
             updateUserDto.Email));
         return Ok(updatedUser);
     }
-    
-    
+
+
 }

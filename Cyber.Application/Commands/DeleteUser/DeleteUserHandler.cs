@@ -12,7 +12,7 @@ internal class DeleteUserHandler : IRequestHandler<DeleteUserCommand>
     {
         _usersRepository = usersRepository;
     }
-    
+
     public async Task<Unit> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _usersRepository.GetUserById(request.UserId);

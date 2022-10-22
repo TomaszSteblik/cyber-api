@@ -31,14 +31,14 @@ public class User
 
     public void ChangePassword(string newPassword, IEnumerable<IPasswordPolicy> passwordPolicies, IEnumerable<UserPassword> previousPasswords)
     {
-        foreach (var passwordPolicy in passwordPolicies.Where(policy=>policy.IsEnabled))
+        foreach (var passwordPolicy in passwordPolicies.Where(policy => policy.IsEnabled))
         {
             passwordPolicy.CheckPassword(newPassword);
         }
-        
+
         if (previousPasswords.Any(x => x.IsMatch(newPassword)))
             throw new PasswordAlreadyUsedException(newPassword, UserId.ToString());
-        
+
         Password = new UserPassword(newPassword);
     }
 
@@ -61,13 +61,13 @@ public class User
     {
         if (username is not null)
             Username = username;
-        
+
         if (email is not null)
             Email = email;
-        
+
         if (firstName is not null)
             FirstName = firstName;
-        
+
         if (lastName is not null)
             LastName = lastName;
     }

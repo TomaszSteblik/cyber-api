@@ -9,6 +9,6 @@ public abstract class ApplicationException : SystemException
 
     public ApplicationException(string message) : base(message)
     {
-        
+
     }
 }

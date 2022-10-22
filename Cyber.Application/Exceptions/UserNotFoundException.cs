@@ -9,6 +9,6 @@ internal class UserNotFoundException : ApplicationException
 
     public UserNotFoundException(Guid guid) : base($"User with id: {guid} not found.")
     {
-        
+
     }
 }

@@ -12,7 +12,7 @@ internal class JwtService : IJwtService
 {
     private readonly string _secret;
     private readonly string _expiration;
-    
+
     public JwtService(IConfiguration configuration)
     {
         _secret = configuration.GetSection("Jwt")["secret"];

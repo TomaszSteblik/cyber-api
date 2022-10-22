@@ -26,7 +26,7 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, GetUserDto>
         _passwordGenerationService = passwordGenerationService;
         _mailingService = mailingService;
     }
-    
+
     public async Task<GetUserDto> Handle(AddUserCommand request, CancellationToken cancellationToken)
     {
         var generatedPassword = _passwordGenerationService.GeneratePassword();
