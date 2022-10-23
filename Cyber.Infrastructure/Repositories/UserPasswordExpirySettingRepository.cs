@@ -1,27 +1,30 @@
 using Cyber.Domain.Repositories;
+using Cyber.Infrastructure.DAOs;
+using MongoDB.Driver;
 
 namespace Cyber.Infrastructure.Repositories;
 
-public class UserPasswordExpirySettingRepository : IUserPasswordExpirySettingRepository
+public class UserPasswordExpirySettingRepository : MongoRepositoryBase<UserPasswordExpirySetting>, IUserPasswordExpirySettingRepository
 {
-    private readonly Dictionary<Guid, uint> _passwordExpiryTimeDictionary;
     private const uint DefaultLifetime = 30;
-    public UserPasswordExpirySettingRepository()
+    public UserPasswordExpirySettingRepository(IMongoClient mongoClient) : base(mongoClient)
     {
-        _passwordExpiryTimeDictionary = new Dictionary<Guid, uint>();
+
     }
 
-    public Task<uint> GetPasswordLifetimeForUserGuid(Guid userId)
+    public async Task<uint> GetPasswordLifetimeForUserGuid(Guid userId)
     {
-        if (_passwordExpiryTimeDictionary.TryGetValue(userId, out var lifetime) is false)
-            lifetime = DefaultLifetime;
-        return Task.FromResult(lifetime);
+        var cursor = await GetCollection().FindAsync(x => x.UserId == userId);
+        return (await cursor.FirstOrDefaultAsync())?.ExpiryTimeInDays ?? DefaultLifetime;
     }
 
-    public Task SetPasswordLifetimeForUserGuid(Guid userId, uint days)
+    public async Task SetPasswordLifetimeForUserGuid(Guid userId, uint days)
     {
-        if (_passwordExpiryTimeDictionary.TryAdd(userId, days) is false)
-            _passwordExpiryTimeDictionary.Add(userId, days);
-        return Task.CompletedTask;
+        var update = Builders<UserPasswordExpirySetting>.Update.Set(nameof(UserPasswordExpirySetting.ExpiryTimeInDays), days);
+        var options = new UpdateOptions { IsUpsert = true };
+        await GetCollection().UpdateOneAsync(
+            setting => setting.UserId == userId,
+            update,
+            options);
     }
 }

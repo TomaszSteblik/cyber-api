@@ -15,7 +15,7 @@ public class PasswordPoliciesRepository : MongoRepositoryBase<PasswordPolicyStat
 
     public async Task<bool> GetEnabledStatusByPolicyKey(string key, Guid userId)
     {
-        var statusCursor = await GetCollection().FindAsync(status => status.Key == key && status.UserId == userId.ToString());
+        var statusCursor = await GetCollection().FindAsync(status => status.Key == key && status.UserId == userId);
         var status = await statusCursor.FirstOrDefaultAsync();
 
         return status is null || status.Status;
@@ -26,7 +26,7 @@ public class PasswordPoliciesRepository : MongoRepositoryBase<PasswordPolicyStat
         var update = Builders<PasswordPolicyStatus>.Update.Set(nameof(PasswordPolicyStatus.Key), key).Set(nameof(PasswordPolicyStatus.Status), status);
         var options = new UpdateOptions { IsUpsert = true };
         await GetCollection().UpdateOneAsync(
-            policyStatus => policyStatus.Key == key && policyStatus.UserId == userId.ToString(),
+            policyStatus => policyStatus.Key == key && policyStatus.UserId == userId,
             update,
             options);
     }
