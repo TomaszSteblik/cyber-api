@@ -1,5 +1,7 @@
+using Cyber.Application.Commands.ChangePasswordLifetime;
 using Cyber.Application.Commands.ChangePolicyStatus;
 using Cyber.Application.DTOs.Update;
+using Cyber.Application.Queries.GetPasswordLifetime;
 using Cyber.Application.Queries.GetUserPolicies;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -20,12 +22,20 @@ public class PasswordPoliciesController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserPasswordPoliciesStates(Guid userId)
     {
         return Ok(await _mediator.Send(new GetUserPasswordPoliciesQuery(userId)));
     }
 
     [HttpPost("Enable")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> EnablePasswordPolicy([FromBody] ChangePolicyStatusDto changePolicyStatusDto)
     {
         return Ok(await _mediator.Send(
@@ -33,9 +43,35 @@ public class PasswordPoliciesController : ControllerBase
     }
 
     [HttpPost("Disable")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DisablePasswordPolicy([FromBody] ChangePolicyStatusDto changePolicyStatusDto)
     {
         return Ok(await _mediator.Send(
             new ChangePolicyStatusCommand(changePolicyStatusDto.UserId, changePolicyStatusDto.Key, false)));
     }
+
+    [HttpGet("PasswordExpireTime")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPasswordLifetime(Guid userGuid)
+    {
+        return Ok(await _mediator.Send(new GetPasswordLifetimeQuery(userGuid)));
+    }
+
+    [HttpPost("PasswordExpireTime")]
+    [HttpGet("PasswordExpireTime")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangePasswordLifetime([FromBody] ChangePasswordLifetimeDto changePasswordLifetimeDto)
+    {
+        return Ok(new ChangePasswordLifetimeCommand(changePasswordLifetimeDto.UserId, changePasswordLifetimeDto.ExpireTimeInDays));
+    }
+
 }

@@ -86,9 +86,9 @@ public class User
         IsBlocked = false;
     }
 
-    public void CheckPasswordExpiryDate()
+    public void CheckPasswordExpiryDate(uint lifetimeInDays)
     {
-        if (Password.CreatedAt <= DateTime.Now.AddDays(-30))
+        if (Password.CreatedAt <= DateTime.Now.AddDays(-lifetimeInDays))
             throw new PasswordExpiredException(Username);
     }
 }
