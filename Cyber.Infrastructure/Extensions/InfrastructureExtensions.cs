@@ -20,7 +20,7 @@ public static class InfrastructureExtensions
         serviceCollection.AddScoped<IMongoClient, MongoClient>(s =>
             new MongoClient(s.GetRequiredService<IConfiguration>()["MongoConnectionString"]));
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
-        serviceCollection.AddSingleton<IUsersRepository, UsersRepository>();
+        serviceCollection.AddScoped<IUsersRepository, UsersRepository>();
         serviceCollection.AddTransient<ExceptionToHttpMiddleware>();
         serviceCollection.AddScoped<IPreviousPasswordsRepository, PreviousPasswordsRepository>();
         serviceCollection.AddScoped<IMailingService, MailingService>();

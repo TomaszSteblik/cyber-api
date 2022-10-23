@@ -7,7 +7,6 @@ public class UserPasswordProfile : Profile
 {
     public UserPasswordProfile()
     {
-        CreateMap<UserPassword, DAOs.UserPassword>()
-            .ReverseMap();
+        CreateMap<UserPassword, DAOs.UserPassword>().ReverseMap();
     }
 }
