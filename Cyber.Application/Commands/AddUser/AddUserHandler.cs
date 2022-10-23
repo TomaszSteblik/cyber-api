@@ -33,13 +33,15 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, GetUserDto>
         var user = new User(request.UserToAdd.Username, generatedPassword, request.UserToAdd.FirstName,
             request.UserToAdd.LastName, request.UserToAdd.Email, UserRole.PasswordChangeRequired);
         user.Validate();
-        var addedUser = await _usersRepository.Add(user);
+
         var emailStatus = await _mailingService.SendPasswordMail(user, generatedPassword);
         if (!emailStatus)
         {
-            //TODO: Put mail into outbox
             throw new EmailSendFailedException($"Failed to send new password email");
         }
+
+        var addedUser = await _usersRepository.Add(user);
+
         return _mapper.Map<GetUserDto>(addedUser);
     }
 }

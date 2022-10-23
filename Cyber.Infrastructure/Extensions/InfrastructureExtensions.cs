@@ -20,6 +20,7 @@ public static class InfrastructureExtensions
         serviceCollection.AddScoped<IMailingService, MailingService>();
         serviceCollection.AddScoped<IMailMessageFactory, MailMessageFactory>();
         serviceCollection.AddSingleton<IPasswordPoliciesRepository, PasswordPoliciesRepository>();
+        serviceCollection.AddSingleton<IUserPasswordExpirySettingRepository, UserPasswordExpirySettingRepository>();
         return serviceCollection;
     }
 }
