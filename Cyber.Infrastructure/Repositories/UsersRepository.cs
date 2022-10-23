@@ -46,6 +46,11 @@ public class UsersRepository : IUsersRepository
         return Task.FromResult(_users.FirstOrDefault(x => x.UserId == userId));
     }
 
+    public Task<User?> GetUserByUsername(string username)
+    {
+        return Task.FromResult(_users.FirstOrDefault(x => x.Username == username));
+    }
+
     public Task<User> Update(User user)
     {
         return Task.FromResult(user);

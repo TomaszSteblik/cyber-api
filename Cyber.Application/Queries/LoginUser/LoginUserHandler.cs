@@ -19,7 +19,7 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
     public async Task<string> Handle(LoginUserRequest request, CancellationToken cancellationToken)
     {
         //find user by email
-        var user = await _usersRepository.GetUserByEmail(request.Login);
+        var user = await _usersRepository.GetUserByUsername(request.Login);
         if (user is null)
             throw new IncorrectCredentialsException($"login: {request.Login}");
         //check if user password matches hashed pass
