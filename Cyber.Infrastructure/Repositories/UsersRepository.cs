@@ -1,17 +1,27 @@
+using AutoMapper;
 using Cyber.Domain.Entities;
 using Cyber.Domain.Enums;
 using Cyber.Domain.Repositories;
+using MongoDB.Driver;
 
 namespace Cyber.Infrastructure.Repositories;
 
-public class UsersRepository : IUsersRepository
+public class UsersRepository : MongoRepositoryBase<DAOs.User>, IUsersRepository
 {
-    private static List<User> _users;
+    private readonly IMapper _mapper;
     private const int EntriesPerPage = 100;
 
-    public UsersRepository()
+    public UsersRepository(IMongoClient mongoClient, IMapper mapper) : base(mongoClient)
     {
-        _users = new List<User>
+        _mapper = mapper;
+    }
+
+    private async Task PrepareDbIfEmpty()
+    {
+        if (await GetCollection().CountDocumentsAsync(FilterDefinition<DAOs.User>.Empty) > 0)
+            return;
+
+        var users = new List<User>
         {
             new User(
                 "tsteblik",
@@ -34,47 +44,87 @@ public class UsersRepository : IUsersRepository
                 "admin@cb.com",
                 UserRole.Admin){UserId = Guid.Parse("3620194c-b1e0-4390-8272-9e4595b0856c")}
         };
-        _users[0].Password.CreatedAt = _users[0].Password.CreatedAt.AddDays(-60);
+        users[0].Password.CreatedAt = users[0].Password.CreatedAt.AddDays(-60);
+        var usersDao = _mapper.Map<IEnumerable<DAOs.User>>(users);
+        await GetCollection().InsertManyAsync(usersDao);
     }
 
-    public Task<User?> GetUserByEmail(string email)
+    public async Task<User?> GetUserByEmail(string email)
     {
-        return Task.FromResult(_users.FirstOrDefault(x => x.Email == email));
+        await PrepareDbIfEmpty();
+
+        var cursor = await GetCollection().FindAsync(user => user.Email == email);
+        var user = await cursor.FirstOrDefaultAsync();
+        return _mapper.Map<User>(user);
     }
 
-    public Task<User?> GetUserById(Guid userId)
+    public async Task<User?> GetUserById(Guid userId)
     {
-        return Task.FromResult(_users.FirstOrDefault(x => x.UserId == userId));
+        await PrepareDbIfEmpty();
+
+        var cursor = await GetCollection().FindAsync(user => user.UserId == userId);
+        var user = await cursor.FirstOrDefaultAsync();
+        return _mapper.Map<User>(user);
     }
 
-    public Task<User?> GetUserByUsername(string username)
+    public async Task<User?> GetUserByUsername(string username)
     {
-        return Task.FromResult(_users.FirstOrDefault(x => x.Username == username));
+        await PrepareDbIfEmpty();
+
+        var cursor = await GetCollection().FindAsync(user => user.Username == username);
+        var user = await cursor.FirstOrDefaultAsync();
+        return _mapper.Map<User>(user);
     }
 
-    public Task<User> Update(User user)
+    public async Task<User> Update(User user)
     {
-        return Task.FromResult(user);
+        await PrepareDbIfEmpty();
+
+        var userDao = _mapper.Map<DAOs.User>(user);
+
+        var update = Builders<DAOs.User>.Update
+            .Set(nameof(DAOs.User.Email), userDao.Email)
+            .Set(nameof(DAOs.User.Password), userDao.Password)
+            .Set(nameof(DAOs.User.Role), userDao.Role)
+            .Set(nameof(DAOs.User.Username), userDao.Username)
+            .Set(nameof(DAOs.User.FirstName), userDao.FirstName)
+            .Set(nameof(DAOs.User.IsBlocked), userDao.IsBlocked)
+            .Set(nameof(DAOs.User.LastName), userDao.LastName);
+
+
+        var added = await GetCollection().FindOneAndUpdateAsync(u => u.UserId == userDao.UserId, update);
+
+        return _mapper.Map<User>(added);
     }
 
-    public Task<User> Add(User user)
+    public async Task<User> Add(User user)
     {
-        _users.Add(user);
-        return Task.FromResult(user);
+        await PrepareDbIfEmpty();
+
+        var userToAdd = _mapper.Map<DAOs.User>(user);
+        await GetCollection().InsertOneAsync(userToAdd);
+        var cursor = await GetCollection().FindAsync(u => u.UserId == user.UserId);
+        var addedUser = await cursor.FirstOrDefaultAsync();
+        return _mapper.Map<User>(addedUser);
     }
 
-    public Task<IEnumerable<User>> GetUsersPage(int requestPageIndex)
+    public async Task<IEnumerable<User>> GetUsersPage(int requestPageIndex)
     {
-        return Task.FromResult(
-            _users
-                .Skip(requestPageIndex * EntriesPerPage)
-                .Take((requestPageIndex + 1) * EntriesPerPage)
-            );
+        await PrepareDbIfEmpty();
+
+        var users = await GetCollection()
+            .Find(FilterDefinition<DAOs.User>.Empty)
+            .Skip(requestPageIndex * EntriesPerPage)
+            .Limit((requestPageIndex + 1) * EntriesPerPage)
+            .ToListAsync();
+
+        return _mapper.Map<IEnumerable<User>>(users);
     }
 
-    public Task Delete(Guid userUserId)
+    public async Task Delete(Guid userId)
     {
-        _users.Remove(_users.First(x => x.UserId == userUserId));
-        return Task.CompletedTask;
+        await PrepareDbIfEmpty();
+
+        await GetCollection().DeleteOneAsync(user => user.UserId == userId);
     }
 }

@@ -13,13 +13,15 @@ internal class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand>
     private readonly IUsersRepository _usersRepository;
     private readonly IPasswordGenerationService _passwordGenerationService;
     private readonly IMailingService _mailingService;
+    private readonly IPreviousPasswordsRepository _previousPasswordsRepository;
 
     public ResetPasswordHandler(IUsersRepository usersRepository, IPasswordGenerationService passwordGenerationService,
-        IMailingService mailingService)
+        IMailingService mailingService, IPreviousPasswordsRepository previousPasswordsRepository)
     {
         _usersRepository = usersRepository;
         _passwordGenerationService = passwordGenerationService;
         _mailingService = mailingService;
+        _previousPasswordsRepository = previousPasswordsRepository;
     }
 
     public async Task<Unit> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
@@ -41,6 +43,7 @@ internal class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand>
             throw new EmailSendFailedException($"Failed to send new password email");
         }
 
+        await _previousPasswordsRepository.AddPassword(user.Password, user.UserId);
         await _usersRepository.Update(user);
 
         return Unit.Value;

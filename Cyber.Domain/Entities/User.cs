@@ -17,6 +17,11 @@ public class User
     public bool IsBlocked { get; set; }
     public UserRole Role { get; set; }
 
+    public User()
+    {
+
+    }
+
     public User(string username, string password, string firstName, string lastName, string email, UserRole role)
     {
         UserId = Guid.NewGuid();

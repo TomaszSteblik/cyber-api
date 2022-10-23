@@ -70,7 +70,7 @@ public class PasswordPoliciesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ChangePasswordLifetime([FromBody] ChangePasswordLifetimeDto changePasswordLifetimeDto)
     {
-        return Ok(new ChangePasswordLifetimeCommand(changePasswordLifetimeDto.UserId, changePasswordLifetimeDto.ExpireTimeInDays));
+        return Ok(await _mediator.Send(new ChangePasswordLifetimeCommand(changePasswordLifetimeDto.UserId, changePasswordLifetimeDto.ExpireTimeInDays)));
     }
 
 }

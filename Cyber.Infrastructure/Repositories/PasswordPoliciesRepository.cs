@@ -1,27 +1,33 @@
+using AutoMapper;
 using Cyber.Domain.Repositories;
+using Cyber.Infrastructure.DAOs;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Cyber.Infrastructure.Repositories;
 
-public class PasswordPoliciesRepository : IPasswordPoliciesRepository
+public class PasswordPoliciesRepository : MongoRepositoryBase<PasswordPolicyStatus>, IPasswordPoliciesRepository
 {
-    private readonly Dictionary<(Guid userId, string policyKey), bool> _policyStatusDictionary;
-
-    public PasswordPoliciesRepository()
+    public PasswordPoliciesRepository(IMongoClient mongoClient) : base(mongoClient)
     {
-        _policyStatusDictionary = new Dictionary<(Guid userId, string policyKey), bool>();
+
     }
 
-    public Task<bool> GetEnabledStatusByPolicyKey(string key, Guid userId)
+    public async Task<bool> GetEnabledStatusByPolicyKey(string key, Guid userId)
     {
-        if (_policyStatusDictionary.TryGetValue((userId, key), out var isEnabled) is false)
-            isEnabled = true;
-        return Task.FromResult(isEnabled);
+        var statusCursor = await GetCollection().FindAsync(status => status.Key == key && status.UserId == userId);
+        var status = await statusCursor.FirstOrDefaultAsync();
+
+        return status is null || status.Status;
     }
 
-    public Task SaveEnabledStatus(string key, bool status, Guid userId)
+    public async Task SaveEnabledStatus(string key, bool status, Guid userId)
     {
-        if (_policyStatusDictionary.TryAdd((userId, key), status) is false)
-            _policyStatusDictionary.Add((userId, key), status);
-        return Task.CompletedTask;
+        var update = Builders<PasswordPolicyStatus>.Update.Set(nameof(PasswordPolicyStatus.Key), key).Set(nameof(PasswordPolicyStatus.Status), status);
+        var options = new UpdateOptions { IsUpsert = true };
+        await GetCollection().UpdateOneAsync(
+            policyStatus => policyStatus.Key == key && policyStatus.UserId == userId,
+            update,
+            options);
     }
 }

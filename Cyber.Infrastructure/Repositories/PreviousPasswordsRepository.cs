@@ -1,29 +1,35 @@
+using AutoMapper;
 using Cyber.Domain.Repositories;
-using Cyber.Domain.ValueObjects;
+using Cyber.Infrastructure.DAOs;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using UserPassword = Cyber.Domain.ValueObjects.UserPassword;
 
 namespace Cyber.Infrastructure.Repositories;
 
-public class PreviousPasswordsRepository : IPreviousPasswordsRepository
+public class PreviousPasswordsRepository : MongoRepositoryBase<PreviousPassword>, IPreviousPasswordsRepository
 {
-    private List<(Guid id, UserPassword pasword)> _passwords;
+    private readonly IMapper _mapper;
 
-    public PreviousPasswordsRepository()
+    public PreviousPasswordsRepository(IMongoClient mongoClient, IMapper mapper) : base(mongoClient)
     {
-        _passwords = new List<(Guid, UserPassword)>
+        _mapper = mapper;
+    }
+    public async Task<IEnumerable<UserPassword>> GetPreviousUserPasswords(Guid userId)
+    {
+        var cursor = await GetCollection().FindAsync(x => x.UserId == userId);
+        var passwords = cursor.ToEnumerable().Select(x => x.Password);
+        return _mapper.Map<IEnumerable<UserPassword>>(passwords);
+    }
+
+    public async Task AddPassword(UserPassword oldPassword, Guid userId)
+    {
+        var password = _mapper.Map<DAOs.UserPassword>(oldPassword);
+        await GetCollection().InsertOneAsync(new PreviousPassword
         {
-            (Guid.Parse("3620194c-b1e0-4390-8272-9e4595b0856c"), new UserPassword("Test123")),
-            (Guid.Parse("7842869e-0d45-4880-a42a-52c91946ed0c"), new UserPassword("Kl123")),
-            (Guid.Parse("24acdd21-6a87-4b3c-9a28-f67d7f3dd0be"), new UserPassword("Tost987"))
-        };
-    }
-    public Task<IEnumerable<UserPassword>> GetPreviousUserPasswords(Guid userId)
-    {
-        return Task.FromResult(_passwords.Where(x => x.id == userId).Select(pair => pair.pasword));
-    }
-
-    public Task AddPassword(UserPassword oldPassword, Guid userId)
-    {
-        _passwords.Add((userId, oldPassword));
-        return Task.CompletedTask;
+            Id = new ObjectId(),
+            Password = password,
+            UserId = userId
+        });
     }
 }
