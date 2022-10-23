@@ -64,7 +64,6 @@ public class PasswordPoliciesController : ControllerBase
     }
 
     [HttpPost("PasswordExpireTime")]
-    [HttpGet("PasswordExpireTime")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
