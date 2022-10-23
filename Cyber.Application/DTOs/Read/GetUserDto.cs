@@ -14,5 +14,6 @@ public class GetUserDto
 public enum UserRole
 {
     User,
-    Admin
+    Admin,
+    PasswordChangeRequired
 }
