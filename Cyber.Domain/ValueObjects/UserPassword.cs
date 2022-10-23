@@ -6,11 +6,13 @@ public class UserPassword
 {
     public string Password { get; }
     public string Salt { get; }
+    public DateTime CreatedAt { get; set; }
 
     public UserPassword(string plainPassword)
     {
         Salt = GenerateRandomSalt();
         Password = HashPassword(Salt, plainPassword);
+        CreatedAt = DateTime.Now;
     }
 
     public bool IsMatch(string password) =>

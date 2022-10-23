@@ -34,6 +34,7 @@ public class UsersRepository : IUsersRepository
                 "admin@cb.com",
                 UserRole.Admin){UserId = Guid.Parse("3620194c-b1e0-4390-8272-9e4595b0856c")}
         };
+        _users[0].Password.CreatedAt = _users[0].Password.CreatedAt.AddDays(-60);
     }
 
     public Task<User?> GetUserByEmail(string email)

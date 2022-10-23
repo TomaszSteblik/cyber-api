@@ -22,9 +22,13 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
         var user = await _usersRepository.GetUserByUsername(request.Login);
         if (user is null)
             throw new IncorrectCredentialsException($"login: {request.Login}");
+
         //check if user password matches hashed pass
         if (user.Password.IsMatch(request.Password) is false)
             throw new IncorrectCredentialsException($"pass: {request.Password}");
+
+        user.CheckPasswordExpiryDate();
+
         //create and return jwt token containing userId and role
         return _jwtService.GenerateTokenForUser(user);
     }

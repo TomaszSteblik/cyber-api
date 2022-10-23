@@ -85,4 +85,10 @@ public class User
     {
         IsBlocked = false;
     }
+
+    public void CheckPasswordExpiryDate()
+    {
+        if (Password.CreatedAt <= DateTime.Now.AddDays(-30))
+            throw new PasswordExpiredException(Username);
+    }
 }
