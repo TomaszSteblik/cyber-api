@@ -1,3 +1,4 @@
+using System.Reflection;
 using Cyber.Application.Services;
 using Cyber.Domain.Repositories;
 using Cyber.Domain.Services;
@@ -18,9 +19,10 @@ public static class InfrastructureExtensions
         serviceCollection.AddSingleton<IJwtService, JwtService>();
         serviceCollection.AddScoped<IMongoClient, MongoClient>(s =>
             new MongoClient(s.GetRequiredService<IConfiguration>()["MongoConnectionString"]));
+        serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
         serviceCollection.AddSingleton<IUsersRepository, UsersRepository>();
         serviceCollection.AddTransient<ExceptionToHttpMiddleware>();
-        serviceCollection.AddSingleton<IPreviousPasswordsRepository, PreviousPasswordsRepository>();
+        serviceCollection.AddScoped<IPreviousPasswordsRepository, PreviousPasswordsRepository>();
         serviceCollection.AddScoped<IMailingService, MailingService>();
         serviceCollection.AddScoped<IMailMessageFactory, MailMessageFactory>();
         serviceCollection.AddScoped<IPasswordPoliciesRepository, PasswordPoliciesRepository>();

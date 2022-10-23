@@ -29,8 +29,7 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
         var previousPasswords = await _previousPasswordsRepository.GetPreviousUserPasswords(request.UserId);
         var oldPassword = user.Password;
 
-        user.ChangePassword(request.NewPassword, _passwordPolicies, previousPasswords);
-
+        await user.ChangePassword(request.NewPassword, _passwordPolicies, previousPasswords);
 
         await _previousPasswordsRepository.AddPassword(oldPassword, user.UserId);
         await _usersRepository.Update(user);

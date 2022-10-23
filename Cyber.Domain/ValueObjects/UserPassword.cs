@@ -4,9 +4,14 @@ namespace Cyber.Domain.ValueObjects;
 
 public class UserPassword
 {
-    public string Password { get; }
-    public string Salt { get; }
+    public string Password { get; set; }
+    public string Salt { get; set; }
     public DateTime CreatedAt { get; set; }
+
+    public UserPassword()
+    {
+
+    }
 
     public UserPassword(string plainPassword)
     {
