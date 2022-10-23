@@ -2,6 +2,7 @@ using Cyber.Application.Commands.AddUser;
 using Cyber.Application.Commands.BlockUser;
 using Cyber.Application.Commands.ChangePassword;
 using Cyber.Application.Commands.DeleteUser;
+using Cyber.Application.Commands.ResetPassword;
 using Cyber.Application.Commands.UpdateUser;
 using Cyber.Application.DTOs.Create;
 using Cyber.Application.DTOs.Delete;
@@ -123,6 +124,12 @@ public class UsersController : ControllerBase
         return Ok(await _mediator.Send(new BlockUserCommand(blockUserDto.UserId, false)));
     }
 
-    //TODO:
-    //- waznosc hasla
+    [AllowAnonymous]
+    [HttpPost("ResetPassword")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ResetPassword(string email)
+    {
+        return Ok(await _mediator.Send(new ResetPasswordCommand(email)));
+    }
 }
