@@ -53,7 +53,7 @@ public class UsersController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost("Add")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> AddUser([FromBody] AddUserDto addUserDto)
@@ -83,7 +83,7 @@ public class UsersController : ControllerBase
     }
 
     [Authorize(Roles = "Admin")]
-    [HttpPost]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
