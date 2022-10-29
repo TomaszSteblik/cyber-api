@@ -32,6 +32,9 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
 
         user.CheckPasswordExpiryDate(await _userPasswordExpirySettingRepository.GetPasswordLifetimeForUserGuid(user.UserId));
 
+        if (user.IsBlocked)
+            throw new UserBlockedException(user.UserId);
+
         //create and return jwt token containing userId and role
         return _jwtService.GenerateTokenForUser(user);
     }
