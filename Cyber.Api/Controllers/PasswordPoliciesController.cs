@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cyber.Api.Controllers;
 
-[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("[controller]")]
 public class PasswordPoliciesController : ControllerBase
@@ -21,6 +20,7 @@ public class PasswordPoliciesController : ControllerBase
         _mediator = mediator;
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -31,7 +31,7 @@ public class PasswordPoliciesController : ControllerBase
         return Ok(await _mediator.Send(new GetUserPasswordPoliciesQuery(userId)));
     }
 
-    [Authorize(Roles = "Admin,User,PasswordChangeRequired")]
+    [Authorize]
     [HttpGet("Me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -45,6 +45,7 @@ public class PasswordPoliciesController : ControllerBase
         return Ok(await _mediator.Send(new GetUserPasswordPoliciesQuery(userId)));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("Enable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -56,6 +57,7 @@ public class PasswordPoliciesController : ControllerBase
             new ChangePolicyStatusCommand(changePolicyStatusDto.UserId, changePolicyStatusDto.Key, true)));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("Disable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -67,6 +69,7 @@ public class PasswordPoliciesController : ControllerBase
             new ChangePolicyStatusCommand(changePolicyStatusDto.UserId, changePolicyStatusDto.Key, false)));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("PasswordExpireTime")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -77,6 +80,7 @@ public class PasswordPoliciesController : ControllerBase
         return Ok(await _mediator.Send(new GetPasswordLifetimeQuery(userGuid)));
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpPost("PasswordExpireTime")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
