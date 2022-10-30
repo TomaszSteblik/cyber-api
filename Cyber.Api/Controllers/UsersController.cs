@@ -49,7 +49,7 @@ public class UsersController : ControllerBase
         var containsId = TryParse(User.Claims.First(x => x.Type == "UserId").Value, out var userId);
         if (containsId is false)
             return BadRequest();
-        return Ok(await _mediator.Send(new ChangePasswordCommand(changePasswordDto.NewPassword, userId)));
+        return Ok(await _mediator.Send(new ChangePasswordCommand(changePasswordDto.NewPassword, userId, changePasswordDto.OldPassword)));
     }
 
     [Authorize(Roles = "Admin")]
@@ -91,8 +91,11 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto updateUserDto)
     {
-        if (updateUserDto.Password is not null)
-            await _mediator.Send(new ChangePasswordCommand(updateUserDto.Password, updateUserDto.UserId));
+        if (updateUserDto.Password is not null && updateUserDto.OldPassword is not null)
+            await _mediator.Send(new ChangePasswordCommand(
+    updateUserDto.Password,
+                updateUserDto.UserId,
+                updateUserDto.OldPassword));
         var updatedUser = await _mediator.Send(new UpdateUserInformationsCommand(
             updateUserDto.UserId,
             updateUserDto.Username,

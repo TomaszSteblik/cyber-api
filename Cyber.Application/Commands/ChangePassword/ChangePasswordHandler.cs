@@ -26,6 +26,9 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
         if (user is null)
             throw new UserNotFoundException(request.UserId);
 
+        if (!user.Password.IsMatch(request.OldPassword))
+            throw new IncorrectCredentialsException($"Incorrect old password: {request.OldPassword}");
+
         var previousPasswords = await _previousPasswordsRepository.GetPreviousUserPasswords(request.UserId);
         var oldPassword = user.Password;
 

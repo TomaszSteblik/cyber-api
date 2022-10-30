@@ -31,6 +31,20 @@ public class PasswordPoliciesController : ControllerBase
         return Ok(await _mediator.Send(new GetUserPasswordPoliciesQuery(userId)));
     }
 
+    [Authorize(Roles = "Admin,User,PasswordChangeRequired")]
+    [HttpGet("Me")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetLoggedUserPasswordPoliciesStates()
+    {
+        var containsId = Guid.TryParse(User.Claims.First(x => x.Type == "UserId").Value, out var userId);
+        if (containsId is false)
+            return BadRequest();
+        return Ok(await _mediator.Send(new GetUserPasswordPoliciesQuery(userId)));
+    }
+
     [HttpPost("Enable")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
