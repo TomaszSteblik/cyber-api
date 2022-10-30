@@ -93,8 +93,8 @@ public class UsersController : ControllerBase
     {
         if (updateUserDto.Password is not null && updateUserDto.OldPassword is not null)
             await _mediator.Send(new ChangePasswordCommand(
-    updateUserDto.Password, 
-                updateUserDto.UserId, 
+    updateUserDto.Password,
+                updateUserDto.UserId,
                 updateUserDto.OldPassword));
         var updatedUser = await _mediator.Send(new UpdateUserInformationsCommand(
             updateUserDto.UserId,

@@ -30,7 +30,7 @@ public class PasswordPoliciesController : ControllerBase
     {
         return Ok(await _mediator.Send(new GetUserPasswordPoliciesQuery(userId)));
     }
-    
+
     [Authorize(Roles = "Admin,User,PasswordChangeRequired")]
     [HttpGet("Me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
