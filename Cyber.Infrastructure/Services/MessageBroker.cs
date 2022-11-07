@@ -15,13 +15,13 @@ public class MessageBroker : IMessageBroker
     {
         _serviceBusClient = serviceBusClient;
     }
-    
+
     private string QueueName(MessageType messageType) => messageType switch
     {
         MessageType.UserTracking => "cyber-queue",
         _ => throw new ArgumentOutOfRangeException(nameof(messageType), messageType, "Message type not supported yet")
     };
-    
+
     public async Task Send(object messageObject, MessageType type)
     {
         var sender = _serviceBusClient.CreateSender(QueueName(type));

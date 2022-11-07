@@ -40,7 +40,7 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
 
         await _messageBroker.Send(new
         {
-            Username=user.Username,
+            Username = user.Username,
             DateTime = DateTime.Now,
             Event = "user_logon"
         }, MessageType.UserTracking);
