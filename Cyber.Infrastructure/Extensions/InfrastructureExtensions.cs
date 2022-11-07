@@ -40,6 +40,8 @@ public static class InfrastructureExtensions
         serviceCollection.AddScoped<IPasswordPoliciesRepository, PasswordPoliciesRepository>();
         serviceCollection.AddScoped<IUserPasswordExpirySettingRepository, UserPasswordExpirySettingRepository>();
 
+        serviceCollection.AddScoped<IMessageBroker, MessageBroker>();
+
         return serviceCollection;
     }
 }
