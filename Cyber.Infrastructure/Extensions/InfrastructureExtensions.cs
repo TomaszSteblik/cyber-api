@@ -19,27 +19,27 @@ public static class InfrastructureExtensions
         IConfiguration builderConfiguration)
     {
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
-        
+
         serviceCollection.AddScoped<IMongoClient, MongoClient>(s =>
             new MongoClient(s.GetRequiredService<IConfiguration>().GetConnectionString("Mongo")));
-        
-        serviceCollection.AddAzureClients(x=>
+
+        serviceCollection.AddAzureClients(x =>
         {
             x.AddServiceBusClient(builderConfiguration.GetConnectionString("ServiceBus"));
-        });        
-        
+        });
+
         serviceCollection.AddTransient<ExceptionToHttpMiddleware>();
 
         serviceCollection.AddSingleton<IJwtService, JwtService>();
         serviceCollection.AddScoped<IMailingService, MailingService>();
-        
+
         serviceCollection.AddScoped<IMailMessageFactory, MailMessageFactory>();
-        
+
         serviceCollection.AddScoped<IUsersRepository, UsersRepository>();
         serviceCollection.AddScoped<IPreviousPasswordsRepository, PreviousPasswordsRepository>();
         serviceCollection.AddScoped<IPasswordPoliciesRepository, PasswordPoliciesRepository>();
         serviceCollection.AddScoped<IUserPasswordExpirySettingRepository, UserPasswordExpirySettingRepository>();
-        
+
         return serviceCollection;
     }
 }
