@@ -1,3 +1,4 @@
+using Cyber.Application.Enums;
 using Cyber.Application.Exceptions;
 using Cyber.Application.Services;
 using Cyber.Domain.Repositories;
@@ -10,13 +11,15 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
     private readonly IUsersRepository _usersRepository;
     private readonly IJwtService _jwtService;
     private readonly IUserPasswordExpirySettingRepository _userPasswordExpirySettingRepository;
+    private readonly IMessageBroker _messageBroker;
 
     public LoginUserHandler(IUsersRepository usersRepository, IJwtService jwtService,
-        IUserPasswordExpirySettingRepository userPasswordExpirySettingRepository)
+        IUserPasswordExpirySettingRepository userPasswordExpirySettingRepository, IMessageBroker messageBroker)
     {
         _usersRepository = usersRepository;
         _jwtService = jwtService;
         _userPasswordExpirySettingRepository = userPasswordExpirySettingRepository;
+        _messageBroker = messageBroker;
     }
 
     public async Task<string> Handle(LoginUserRequest request, CancellationToken cancellationToken)
@@ -34,6 +37,13 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
 
         if (user.IsBlocked)
             throw new UserBlockedException(user.UserId);
+
+        await _messageBroker.Send(new
+        {
+            Username=user.Username,
+            DateTime = DateTime.Now,
+            Event = "user_logon"
+        }, MessageType.UserTracking);
 
         //create and return jwt token containing userId and role
         return _jwtService.GenerateTokenForUser(user);
