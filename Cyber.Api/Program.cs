@@ -17,8 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDomain();
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure();
-
+builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddCors();
 
 builder.Services.AddAuthentication(x =>
