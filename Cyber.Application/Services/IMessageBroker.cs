@@ -1,8 +1,8 @@
-using Cyber.Application.Enums;
+using Cyber.Application.Messeges;
 
 namespace Cyber.Application.Services;
 
 public interface IMessageBroker
 {
-    Task Send(object messageObject, MessageType type);
+    Task Send(IMessage message);
 }

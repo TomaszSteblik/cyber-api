@@ -1,8 +1,6 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using Azure.Core.Serialization;
 using Azure.Messaging.ServiceBus;
-using Cyber.Application.Enums;
+using Cyber.Application.Messeges;
 using Cyber.Application.Services;
 
 namespace Cyber.Infrastructure.Services;
@@ -10,23 +8,22 @@ namespace Cyber.Infrastructure.Services;
 public class MessageBroker : IMessageBroker
 {
     private readonly ServiceBusClient _serviceBusClient;
-
+    private const string QueueName = "cyber-queue";
     public MessageBroker(ServiceBusClient serviceBusClient)
     {
         _serviceBusClient = serviceBusClient;
     }
 
-    private string QueueName(MessageType messageType) => messageType switch
+    public async Task Send(IMessage message)
     {
-        MessageType.UserTracking => "cyber-queue",
-        _ => throw new ArgumentOutOfRangeException(nameof(messageType), messageType, "Message type not supported yet")
-    };
-
-    public async Task Send(object messageObject, MessageType type)
-    {
-        var sender = _serviceBusClient.CreateSender(QueueName(type));
-        var messageBytes = JsonSerializer.SerializeToUtf8Bytes(messageObject);
-        var message = new ServiceBusMessage(messageBytes);
-        await sender.SendMessageAsync(message);
+        var sender = _serviceBusClient.CreateSender(QueueName);
+        var messageToSerialize = new
+        {
+            Event = message.GetType().Name,
+            Value = message
+        };
+        var messageBytes = JsonSerializer.SerializeToUtf8Bytes(messageToSerialize);
+        var messageUtf = new ServiceBusMessage(messageBytes);
+        await sender.SendMessageAsync(messageUtf);
     }
 }
