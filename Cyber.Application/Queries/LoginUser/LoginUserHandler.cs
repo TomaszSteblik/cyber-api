@@ -1,5 +1,5 @@
-using Cyber.Application.Enums;
 using Cyber.Application.Exceptions;
+using Cyber.Application.Messeges.Outgoing;
 using Cyber.Application.Services;
 using Cyber.Domain.Repositories;
 using MediatR;
@@ -38,12 +38,7 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
         if (user.IsBlocked)
             throw new UserBlockedException(user.UserId);
 
-        await _messageBroker.Send(new
-        {
-            Username = user.Username,
-            DateTime = DateTime.Now,
-            Event = "user_logon"
-        }, MessageType.UserTracking);
+        await _messageBroker.Send(new UserLoggedIn(DateTime.Now, user.Username));
 
         //create and return jwt token containing userId and role
         return _jwtService.GenerateTokenForUser(user);
