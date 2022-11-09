@@ -1,15 +1,15 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
-using Cyber.Application.Messeges;
+using Cyber.Application.Messages;
 using Cyber.Application.Services;
 
 namespace Cyber.Infrastructure.Services;
 
-public class MessageBroker : IMessageBroker
+public class AzureServiceBusBroker : IMessageBroker
 {
     private readonly ServiceBusClient _serviceBusClient;
     private const string QueueName = "cyber-queue";
-    public MessageBroker(ServiceBusClient serviceBusClient)
+    public AzureServiceBusBroker(ServiceBusClient serviceBusClient)
     {
         _serviceBusClient = serviceBusClient;
     }

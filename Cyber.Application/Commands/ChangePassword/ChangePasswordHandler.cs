@@ -1,4 +1,6 @@
 using Cyber.Application.Exceptions;
+using Cyber.Application.Messages.Outgoing;
+using Cyber.Application.Services;
 using Cyber.Domain.Enums;
 using Cyber.Domain.Policies.PasswordPolicy;
 using Cyber.Domain.Repositories;
@@ -11,13 +13,15 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
     private readonly IUsersRepository _usersRepository;
     private readonly IEnumerable<IPasswordPolicy> _passwordPolicies;
     private readonly IPreviousPasswordsRepository _previousPasswordsRepository;
+    private readonly IMessageBroker _messageBroker;
 
     public ChangePasswordHandler(IUsersRepository usersRepository, IEnumerable<IPasswordPolicy> passwordPolicies,
-        IPreviousPasswordsRepository previousPasswordsRepository)
+        IPreviousPasswordsRepository previousPasswordsRepository, IMessageBroker messageBroker)
     {
         _usersRepository = usersRepository;
         _passwordPolicies = passwordPolicies;
         _previousPasswordsRepository = previousPasswordsRepository;
+        _messageBroker = messageBroker;
     }
 
     public async Task<Unit> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
@@ -36,6 +40,8 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
 
         await _previousPasswordsRepository.AddPassword(oldPassword, user.UserId);
         await _usersRepository.Update(user);
+
+        await _messageBroker.Send(new UserPasswordChanged(DateTime.UtcNow, user.Username, user.UserId));
 
         return Unit.Value;
     }

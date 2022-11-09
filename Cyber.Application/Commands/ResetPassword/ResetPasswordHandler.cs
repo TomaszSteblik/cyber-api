@@ -1,4 +1,5 @@
 using Cyber.Application.Exceptions;
+using Cyber.Application.Messages.Outgoing;
 using Cyber.Application.Services;
 using Cyber.Domain.Enums;
 using Cyber.Domain.Repositories;
@@ -14,14 +15,16 @@ internal class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand>
     private readonly IPasswordGenerationService _passwordGenerationService;
     private readonly IMailingService _mailingService;
     private readonly IPreviousPasswordsRepository _previousPasswordsRepository;
+    private readonly IMessageBroker _messageBroker;
 
     public ResetPasswordHandler(IUsersRepository usersRepository, IPasswordGenerationService passwordGenerationService,
-        IMailingService mailingService, IPreviousPasswordsRepository previousPasswordsRepository)
+        IMailingService mailingService, IPreviousPasswordsRepository previousPasswordsRepository, IMessageBroker messageBroker)
     {
         _usersRepository = usersRepository;
         _passwordGenerationService = passwordGenerationService;
         _mailingService = mailingService;
         _previousPasswordsRepository = previousPasswordsRepository;
+        _messageBroker = messageBroker;
     }
 
     public async Task<Unit> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
@@ -45,6 +48,8 @@ internal class ResetPasswordHandler : IRequestHandler<ResetPasswordCommand>
 
         await _previousPasswordsRepository.AddPassword(user.Password, user.UserId);
         await _usersRepository.Update(user);
+
+        await _messageBroker.Send(new UserPasswordReset(DateTime.UtcNow, user.Username, user.UserId));
 
         return Unit.Value;
     }

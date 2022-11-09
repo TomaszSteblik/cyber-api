@@ -1,4 +1,4 @@
-using Cyber.Application.Messeges;
+using Cyber.Application.Messages;
 
 namespace Cyber.Application.Services;
 
