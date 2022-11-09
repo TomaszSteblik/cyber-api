@@ -1,5 +1,4 @@
 using Cyber.Application.Messages;
-using Cyber.Application.Messeges;
 
 namespace Cyber.Application.Services;
 

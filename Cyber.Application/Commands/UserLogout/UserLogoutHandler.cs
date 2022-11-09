@@ -16,7 +16,7 @@ public class UserLogoutHandler : IRequestHandler<UserLogoutCommand>
         _usersRepository = usersRepository;
         _messageBroker = messageBroker;
     }
-    
+
     public async Task<Unit> Handle(UserLogoutCommand request, CancellationToken cancellationToken)
     {
         var user = await _usersRepository.GetUserById(request.UserId);
@@ -24,7 +24,7 @@ public class UserLogoutHandler : IRequestHandler<UserLogoutCommand>
             throw new UserNotFoundException(request.UserId);
 
         await _messageBroker.Send(new UserLoggedOut(DateTime.UtcNow, user.Username, user.UserId));
-        
+
         return Unit.Value;
     }
 }

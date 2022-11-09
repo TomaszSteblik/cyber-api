@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Azure.Messaging.ServiceBus;
 using Cyber.Application.Messages;
-using Cyber.Application.Messeges;
 using Cyber.Application.Services;
 
 namespace Cyber.Infrastructure.Services;

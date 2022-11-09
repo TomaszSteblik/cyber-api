@@ -26,7 +26,7 @@ internal class DeleteUserHandler : IRequestHandler<DeleteUserCommand>
         await _usersRepository.Delete(user.UserId);
 
         await _messageBroker.Send(new UserDeleted(DateTime.UtcNow, user.Username, user.UserId));
-        
+
         return Unit.Value;
     }
 }
