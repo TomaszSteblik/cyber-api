@@ -38,7 +38,7 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
         if (user.IsBlocked)
             throw new UserBlockedException(user.UserId);
 
-        await _messageBroker.Send(new UserLoggedIn(DateTime.Now, user.Username));
+        await _messageBroker.Send(new UserLoggedIn(DateTime.UtcNow, user.Username));
 
         //create and return jwt token containing userId and role
         return _jwtService.GenerateTokenForUser(user);
