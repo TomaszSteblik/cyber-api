@@ -1,4 +1,4 @@
-namespace Cyber.Application.Messeges.Outgoing;
+namespace Cyber.Application.Messages.Outgoing;
 
 public class UserLoggedIn : IMessage
 {

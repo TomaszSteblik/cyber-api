@@ -1,7 +1,7 @@
 using AutoMapper;
 using Cyber.Application.DTOs.Read;
 using Cyber.Application.Exceptions;
-using Cyber.Application.Messeges.Outgoing;
+using Cyber.Application.Messages.Outgoing;
 using Cyber.Application.Services;
 using Cyber.Domain.Entities;
 using Cyber.Domain.Policies.PasswordPolicy;

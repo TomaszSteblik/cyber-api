@@ -1,5 +1,5 @@
 using Cyber.Application.Exceptions;
-using Cyber.Application.Messeges.Outgoing;
+using Cyber.Application.Messages.Outgoing;
 using Cyber.Application.Services;
 using Cyber.Domain.Repositories;
 using MediatR;
