@@ -4,6 +4,7 @@ using Cyber.Application.Commands.ChangePassword;
 using Cyber.Application.Commands.DeleteUser;
 using Cyber.Application.Commands.ResetPassword;
 using Cyber.Application.Commands.UpdateUser;
+using Cyber.Application.Commands.UserLogout;
 using Cyber.Application.DTOs.Create;
 using Cyber.Application.DTOs.Delete;
 using Cyber.Application.DTOs.Read;
@@ -38,12 +39,26 @@ public class UsersController : ControllerBase
         return Ok(await _mediator.Send(new LoginUserRequest(loginUserDto.Login, loginUserDto.Password)));
     }
 
+    [HttpPost("Logout")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> LogoutUser()
+    {
+        var containsId = TryParse(User.Claims.First(x => x.Type == "UserId").Value, out var userId);
+        if (containsId is false)
+            return BadRequest();
+        return Ok(await _mediator.Send(new UserLogoutCommand(userId)));
+    }
+
     [HttpPost("ChangePassword")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
     {
         var containsId = TryParse(User.Claims.First(x => x.Type == "UserId").Value, out var userId);
