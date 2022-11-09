@@ -1,6 +1,7 @@
 using AutoMapper;
 using Cyber.Application.DTOs.Read;
 using Cyber.Application.Exceptions;
+using Cyber.Application.Messeges.Outgoing;
 using Cyber.Application.Services;
 using Cyber.Domain.Entities;
 using Cyber.Domain.Policies.PasswordPolicy;
@@ -17,14 +18,16 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, GetUserDto>
     private readonly IMapper _mapper;
     private readonly IPasswordGenerationService _passwordGenerationService;
     private readonly IMailingService _mailingService;
+    private readonly IMessageBroker _messageBroker;
 
     public AddUserHandler(IUsersRepository usersRepository, IMapper mapper, IPasswordGenerationService passwordGenerationService,
-        IMailingService mailingService)
+        IMailingService mailingService, IMessageBroker messageBroker)
     {
         _usersRepository = usersRepository;
         _mapper = mapper;
         _passwordGenerationService = passwordGenerationService;
         _mailingService = mailingService;
+        _messageBroker = messageBroker;
     }
 
     public async Task<GetUserDto> Handle(AddUserCommand request, CancellationToken cancellationToken)
@@ -41,6 +44,8 @@ internal class AddUserHandler : IRequestHandler<AddUserCommand, GetUserDto>
         }
 
         var addedUser = await _usersRepository.Add(user);
+
+        await _messageBroker.Send(new UserCreated(DateTime.UtcNow, addedUser.Username, addedUser.UserId));
 
         return _mapper.Map<GetUserDto>(addedUser);
     }
