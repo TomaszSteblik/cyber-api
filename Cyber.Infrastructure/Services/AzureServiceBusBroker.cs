@@ -14,7 +14,7 @@ public class AzureServiceBusBroker : IMessageBroker
         _serviceBusClient = serviceBusClient;
     }
 
-    public async Task Send(IMessage message)
+    public async Task Send<T>(T message) where T : IMessage
     {
         var sender = _serviceBusClient.CreateSender(QueueName);
         var messageToSerialize = new
@@ -22,8 +22,7 @@ public class AzureServiceBusBroker : IMessageBroker
             Event = message.GetType().Name,
             Value = message
         };
-        var options = new JsonSerializerOptions() { MaxDepth = 64 };
-        var messageBytes = JsonSerializer.SerializeToUtf8Bytes(messageToSerialize, options);
+        var messageBytes = JsonSerializer.SerializeToUtf8Bytes(messageToSerialize);
         var messageUtf = new ServiceBusMessage(messageBytes);
         await sender.SendMessageAsync(messageUtf);
     }
