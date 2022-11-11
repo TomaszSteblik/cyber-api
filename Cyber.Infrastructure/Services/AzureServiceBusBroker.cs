@@ -22,8 +22,8 @@ public class AzureServiceBusBroker : IMessageBroker
             Event = message.GetType().Name,
             Value = message
         };
-        var options = new JsonSerializerOptions() {MaxDepth = 64};
-        var messageBytes = JsonSerializer.SerializeToUtf8Bytes(messageToSerialize,options);
+        var options = new JsonSerializerOptions() { MaxDepth = 64 };
+        var messageBytes = JsonSerializer.SerializeToUtf8Bytes(messageToSerialize, options);
         var messageUtf = new ServiceBusMessage(messageBytes);
         await sender.SendMessageAsync(messageUtf);
     }
