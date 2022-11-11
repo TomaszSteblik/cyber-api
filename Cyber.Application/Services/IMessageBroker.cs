@@ -4,5 +4,5 @@ namespace Cyber.Application.Services;
 
 public interface IMessageBroker
 {
-    Task Send(IMessage message);
+    Task Send<T>(T message) where T : IMessage;
 }
