@@ -1,6 +1,7 @@
 using Cyber.Application.Commands.AddUser;
 using Cyber.Application.Commands.BlockUser;
 using Cyber.Application.Commands.ChangePassword;
+using Cyber.Application.Commands.ChangeUserRole;
 using Cyber.Application.Commands.DeleteUser;
 using Cyber.Application.Commands.ResetPassword;
 using Cyber.Application.Commands.UpdateUser;
@@ -140,6 +141,17 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> UnlockUser([FromBody] BlockUserDto blockUserDto)
     {
         return Ok(await _mediator.Send(new BlockUserCommand(blockUserDto.UserId, false)));
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("Role")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangeRole([FromBody] ChangeUserRoleDto changeUserRole)
+    {
+        return Ok(await _mediator.Send(new ChangeUserRoleCommand(changeUserRole.UserId, changeUserRole.NewRole)));
     }
 
     [AllowAnonymous]

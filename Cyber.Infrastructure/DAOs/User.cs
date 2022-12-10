@@ -21,5 +21,8 @@ public enum UserRole
 {
     Admin,
     User,
-    PasswordChangeRequired
+    PasswordChangeRequired,
+    Guest,
+    Manager,
+    Owner
 }
