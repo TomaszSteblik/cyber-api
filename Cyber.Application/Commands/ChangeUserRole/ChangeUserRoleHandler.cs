@@ -11,13 +11,11 @@ namespace Cyber.Application.Commands.ChangeUserRole;
 internal class ChangeUserRoleHandler : IRequestHandler<ChangeUserRoleCommand>
 {
     private readonly IUsersRepository _usersRepository;
-    private readonly IMapper _mapper;
     private readonly IMessageBroker _messageBroker;
 
-    public ChangeUserRoleHandler(IUsersRepository usersRepository, IMapper mapper, IMessageBroker messageBroker)
+    public ChangeUserRoleHandler(IUsersRepository usersRepository, IMessageBroker messageBroker)
     {
         _usersRepository = usersRepository;
-        _mapper = mapper;
         _messageBroker = messageBroker;
     }
 
