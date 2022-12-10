@@ -64,3 +64,16 @@
     }
 }
 ````
+
+````
+{
+    "Event" : "UserRoleChanged",
+    "Value" : {
+        "UnixTimeStamp": 6719759955296570482,
+        "Username": "foobar",
+        "UserId": "a2b891a9-b0b7-400a-a591-5be53aa17eb6",
+        "OldRole": "User",
+        "NewRole": "Owner"
+    }
+}
+````

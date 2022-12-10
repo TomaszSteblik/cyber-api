@@ -36,4 +36,15 @@ public class MailingService : IMailingService
         await client.DisconnectAsync(true);
         return true;
     }
+
+    public async Task<bool> SendOneTimePasswordMail(User user, int x)
+    {
+        var message = _messageFactory.CreateSendOneTimePasswordEmail(user, x, _senderMailAddress);
+        using var client = new SmtpClient();
+        await client.ConnectAsync(_smtpHost, _smtpPort, true);
+        await client.AuthenticateAsync(_senderUsername, _senderPassword);
+        var response = await client.SendAsync(message);
+        await client.DisconnectAsync(true);
+        return true;
+    }
 }

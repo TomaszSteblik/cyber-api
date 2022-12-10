@@ -12,6 +12,7 @@ using Cyber.Application.DTOs.Read;
 using Cyber.Application.DTOs.Update;
 using Cyber.Application.Queries.GetUsers;
 using Cyber.Application.Queries.LoginUser;
+using Cyber.Application.Queries.LoginUserByOneTimePassword;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,15 @@ public class UsersController : ControllerBase
     public UsersController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [AllowAnonymous]
+    [HttpPost("LoginByOneTimePassword")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> LoginUserByOneTimePassword([FromBody] LoginUserByOneTimePasswordDto loginUserDto)
+    {
+        return Ok(await _mediator.Send(new LoginUserByOneTimePasswordQuery(loginUserDto.Login, loginUserDto.Password)));
     }
 
     [AllowAnonymous]
