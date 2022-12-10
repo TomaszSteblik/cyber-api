@@ -142,7 +142,7 @@ public class UsersController : ControllerBase
     {
         return Ok(await _mediator.Send(new BlockUserCommand(blockUserDto.UserId, false)));
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpPost("Role")]
     [ProducesResponseType(StatusCodes.Status200OK)]

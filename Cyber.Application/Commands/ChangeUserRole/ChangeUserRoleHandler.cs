@@ -29,10 +29,10 @@ internal class ChangeUserRoleHandler : IRequestHandler<ChangeUserRoleCommand>
             throw new UserNotFoundException(request.UserId);
 
         var oldRole = user.Role;
-        user.Role = (UserRole) request.NewRole;
+        user.Role = (UserRole)request.NewRole;
         await _usersRepository.Update(user);
-        await _messageBroker.Send(new UserRoleChanged(DateTime.Now, user.Username, user.UserId, 
-            (DTOs.Read.UserRole) oldRole, (DTOs.Read.UserRole) user.Role));
+        await _messageBroker.Send(new UserRoleChanged(DateTime.Now, user.Username, user.UserId,
+            (DTOs.Read.UserRole)oldRole, (DTOs.Read.UserRole)user.Role));
         return Unit.Value;
     }
 }
