@@ -50,6 +50,6 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
         await _messageBroker.Send(new UserLoggedIn(DateTime.UtcNow, user.Username, user.UserId));
 
         //create and return jwt token containing userId and role
-        return _jwtService.GenerateTokenForUser(user);
+        return await _jwtService.GenerateTokenForUser(user);
     }
 }
