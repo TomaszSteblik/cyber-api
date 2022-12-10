@@ -6,12 +6,13 @@ namespace Cyber.Infrastructure.Services;
 public class OldLoginAttemptsRemovalHostedService : IHostedService
 {
     private readonly ILoginAttemptsRepository _loginAttemptsRepository;
+    private readonly IConfigRepository _configRepository;
     private Timer? _timer;
-    private const int LoginAttemptsMaxAgeInMinutes = 15;
 
-    public OldLoginAttemptsRemovalHostedService(ILoginAttemptsRepository loginAttemptsRepository)
+    public OldLoginAttemptsRemovalHostedService(ILoginAttemptsRepository loginAttemptsRepository, IConfigRepository configRepository)
     {
         _loginAttemptsRepository = loginAttemptsRepository;
+        _configRepository = configRepository;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -21,9 +22,10 @@ public class OldLoginAttemptsRemovalHostedService : IHostedService
         return Task.CompletedTask;
     }
 
-    private void RemoveOldLoginAttempts(object? state)
+    private async void RemoveOldLoginAttempts(object? state)
     {
-        _loginAttemptsRepository.RemoveAttemptsOlderThan(DateTime.Now.AddMinutes(-LoginAttemptsMaxAgeInMinutes));
+        var loginAttemptsMaxAgeInMinutes = await _configRepository.GetFailedLoginTimeoutInMinutes();
+        await _loginAttemptsRepository.RemoveAttemptsOlderThan(DateTime.Now.AddMinutes(-loginAttemptsMaxAgeInMinutes));
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
