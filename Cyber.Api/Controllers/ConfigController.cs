@@ -18,19 +18,19 @@ public class ConfigController : ControllerBase
     {
         _mediator = mediator;
     }
-    
+
     [HttpPut("InactiveTimeout")]
     public async Task<IActionResult> SetInactiveTimeout([FromQuery] int value)
     {
         return Ok(await _mediator.Send(new UpdateConfigInactiveTimeoutCommand(value)));
     }
-    
+
     [HttpPut("AllowedLoginAttempts")]
     public async Task<IActionResult> SetAllowedLoginAttempts([FromQuery] int value)
     {
         return Ok(await _mediator.Send(new UpdateConfigAllowedLoginAttemptsCommand(value)));
     }
-    
+
     [HttpPut("FailedLoginTimeout")]
     public async Task<IActionResult> SetFailedLoginTimeout([FromQuery] int value)
     {

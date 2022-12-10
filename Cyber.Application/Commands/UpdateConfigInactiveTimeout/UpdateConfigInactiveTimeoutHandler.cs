@@ -11,7 +11,7 @@ internal class UpdateConfigInactiveTimeoutHandler : IRequestHandler<UpdateConfig
     {
         _configRepository = configRepository;
     }
-    
+
     public async Task<Unit> Handle(UpdateConfigInactiveTimeoutCommand request, CancellationToken cancellationToken)
     {
         await _configRepository.SetInactiveTimeoutInMinutes(request.NewValue);

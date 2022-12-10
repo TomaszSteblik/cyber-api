@@ -14,7 +14,7 @@ internal class ConfigRepositoryInMemory : IConfigRepository
         InactiveTimeoutInMinutes = 15;
         AllowedFailedLoginAttemptsCount = 5;
     }
-    
+
     public Task<int> GetFailedLoginTimeoutInMinutes()
     {
         return Task.FromResult(FailedLoginTimeoutInMinutes);
