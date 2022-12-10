@@ -84,7 +84,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> AddUser([FromBody] AddUserDto addUserDto)
     {
-        return CreatedAtRoute(nameof(GetUsers), await _mediator.Send(new AddUserCommand(addUserDto)));
+        return Ok(await _mediator.Send(new AddUserCommand(addUserDto)));
     }
 
     [Authorize(Roles = "Admin")]
