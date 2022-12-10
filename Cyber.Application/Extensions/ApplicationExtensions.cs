@@ -1,5 +1,6 @@
 using System.Reflection;
 using Cyber.Application.Services;
+using Cyber.Domain.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,8 @@ public static class ApplicationExtensions
         serviceCollection.AddMediatR(Assembly.GetExecutingAssembly());
         serviceCollection.AddAutoMapper(Assembly.GetExecutingAssembly());
         serviceCollection.AddScoped<IPasswordGenerationService, PasswordGenerationService>();
+        serviceCollection.AddSingleton(Random.Shared);
+        serviceCollection.AddScoped<IOneTimePasswordCalculatorService, OneTimePasswordCalculatorService>();
         return serviceCollection;
     }
 }

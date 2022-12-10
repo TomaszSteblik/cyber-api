@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Cyber.Domain.Exceptions;
+using Cyber.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
 using ApplicationException = Cyber.Application.Exceptions.ApplicationException;
 
@@ -30,6 +31,16 @@ public class ExceptionToHttpMiddleware : IMiddleware
             await context.Response.WriteAsync(JsonSerializer.Serialize(messageObject));
         }
         catch (ApplicationException e)
+        {
+            context.Response.StatusCode = (int)e.StatusCode;
+            var messageObject = new
+            {
+                e.ErrorCode,
+                e.Message
+            };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(messageObject));
+        }
+        catch (InfrastructureException e)
         {
             context.Response.StatusCode = (int)e.StatusCode;
             var messageObject = new
