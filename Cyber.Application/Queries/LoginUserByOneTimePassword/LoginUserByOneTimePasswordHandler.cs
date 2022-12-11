@@ -1,3 +1,4 @@
+using Cyber.Application.Commands.GenerateOneTimePassword;
 using Cyber.Application.Exceptions;
 using Cyber.Application.Messages.Outgoing;
 using Cyber.Application.Services;
@@ -16,10 +17,12 @@ public class LoginUserByOneTimePasswordHandler : IRequestHandler<LoginUserByOneT
     private readonly IUserLoginAttemptsBlockService _userLoginAttemptsBlockService;
     private readonly IOneTimePasswordRepository _oneTimePasswordRepository;
     private readonly IOneTimePasswordCalculatorService _oneTimePasswordCalculatorService;
+    private readonly IMediator _mediator;
 
     public LoginUserByOneTimePasswordHandler(IUserLoginAttemptsBlockService userLoginAttemptsBlockService,
         IMessageBroker messageBroker, IJwtService jwtService, IUsersRepository usersRepository,
-        IOneTimePasswordRepository oneTimePasswordRepository, IOneTimePasswordCalculatorService oneTimePasswordCalculatorService)
+        IOneTimePasswordRepository oneTimePasswordRepository, IOneTimePasswordCalculatorService oneTimePasswordCalculatorService,
+        IMediator mediator)
     {
         _userLoginAttemptsBlockService = userLoginAttemptsBlockService;
         _messageBroker = messageBroker;
@@ -27,6 +30,7 @@ public class LoginUserByOneTimePasswordHandler : IRequestHandler<LoginUserByOneT
         _usersRepository = usersRepository;
         _oneTimePasswordRepository = oneTimePasswordRepository;
         _oneTimePasswordCalculatorService = oneTimePasswordCalculatorService;
+        _mediator = mediator;
     }
 
     public async Task<string> Handle(LoginUserByOneTimePasswordQuery request, CancellationToken cancellationToken)
@@ -47,6 +51,8 @@ public class LoginUserByOneTimePasswordHandler : IRequestHandler<LoginUserByOneT
         if (Math.Abs(serverPassword - request.Password) > 0.0001)
         {
             await _userLoginAttemptsBlockService.RegisterFailedLoginAttempt(user.UserId);
+            await _oneTimePasswordRepository.RemoveXValue(user.UserId);
+            await _mediator.Send(new GenerateOneTimePasswordCommand(user.UserId), cancellationToken);
             throw new IncorrectCredentialsException($"pass: {request.Password}");
         }
 
