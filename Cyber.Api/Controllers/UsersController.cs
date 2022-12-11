@@ -3,6 +3,7 @@ using Cyber.Application.Commands.BlockUser;
 using Cyber.Application.Commands.ChangePassword;
 using Cyber.Application.Commands.ChangeUserRole;
 using Cyber.Application.Commands.DeleteUser;
+using Cyber.Application.Commands.GenerateOneTimePassword;
 using Cyber.Application.Commands.ResetPassword;
 using Cyber.Application.Commands.UpdateUser;
 using Cyber.Application.Commands.UserLogout;
@@ -171,5 +172,16 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> ResetPassword(string email)
     {
         return Ok(await _mediator.Send(new ResetPasswordCommand(email)));
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpPost("GenerateOneTimePassword")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GenerateOneTimePassword([FromQuery] Guid userId)
+    {
+        return Ok(await _mediator.Send(new GenerateOneTimePasswordCommand(userId)));
     }
 }
