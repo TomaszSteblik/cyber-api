@@ -45,13 +45,13 @@ public class LoginUserByOneTimePasswordHandler : IRequestHandler<LoginUserByOneT
         //check if user password matches
 
         var x = await _oneTimePasswordRepository.GetXValue(user.UserId);
+        await _oneTimePasswordRepository.RemoveXValue(user.UserId);
         var a = request.Login.Length;
         var serverPassword = _oneTimePasswordCalculatorService.CalculateOneTimePassword(x, a);
 
         if (Math.Abs(serverPassword - request.Password) > 0.0001)
         {
             await _userLoginAttemptsBlockService.RegisterFailedLoginAttempt(user.UserId);
-            await _oneTimePasswordRepository.RemoveXValue(user.UserId);
             await _mediator.Send(new GenerateOneTimePasswordCommand(user.UserId), cancellationToken);
             throw new IncorrectCredentialsException($"pass: {request.Password}");
         }

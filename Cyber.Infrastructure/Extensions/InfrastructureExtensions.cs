@@ -41,7 +41,7 @@ public static class InfrastructureExtensions
         serviceCollection.AddScoped<IUserPasswordExpirySettingRepository, UserPasswordExpirySettingRepository>();
         serviceCollection.AddScoped<ILoginAttemptsRepository, LoginAttemptsRepository>();
         serviceCollection.AddScoped<IOneTimePasswordRepository, OneTimePasswordRepository>();
-        serviceCollection.AddSingleton<IConfigRepository, ConfigRepositoryInMemory>();
+        serviceCollection.AddScoped<IConfigRepository, ConfigRepository>();
 
         serviceCollection.AddScoped<IMessageBroker, AzureServiceBusBroker>();
 
