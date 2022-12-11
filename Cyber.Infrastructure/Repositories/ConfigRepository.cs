@@ -9,8 +9,8 @@ public class ConfigRepository : MongoRepositoryBase<Config>, IConfigRepository
     private const int FailedLoginTimeoutInMinutesDefault = 15;
     private const int InactiveTimeoutInMinutesDefault = 15;
     private const int AllowedFailedLoginAttemptsCountDefault = 5;
-    
-    
+
+
     public ConfigRepository(IMongoClient mongoClient) : base(mongoClient)
     {
     }
