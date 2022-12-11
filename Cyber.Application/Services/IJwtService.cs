@@ -4,5 +4,5 @@ namespace Cyber.Application.Services;
 
 public interface IJwtService
 {
-    string GenerateTokenForUser(User user);
+    Task<string> GenerateTokenForUser(User user);
 }

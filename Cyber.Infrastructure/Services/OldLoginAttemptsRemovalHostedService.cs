@@ -8,7 +8,6 @@ public class OldLoginAttemptsRemovalHostedService : IHostedService
 {
     private readonly IServiceProvider _services;
     private Timer? _timer;
-    private const int LoginAttemptsMaxAgeInMinutes = 15;
 
     public OldLoginAttemptsRemovalHostedService(IServiceProvider services)
     {
@@ -26,7 +25,9 @@ public class OldLoginAttemptsRemovalHostedService : IHostedService
     {
         await using var scope = _services.CreateAsyncScope();
         var scopedLoginAttemptsRepository = scope.ServiceProvider.GetRequiredService<ILoginAttemptsRepository>();
-        await scopedLoginAttemptsRepository.RemoveAttemptsOlderThan(DateTime.Now.AddMinutes(-LoginAttemptsMaxAgeInMinutes));
+        var scopedConfigRepository = scope.ServiceProvider.GetRequiredService<IConfigRepository>();
+        var loginAttemptsMaxAgeInMinutes = await scopedConfigRepository.GetFailedLoginTimeoutInMinutes();
+        await scopedLoginAttemptsRepository.RemoveAttemptsOlderThan(DateTime.Now.AddMinutes(-loginAttemptsMaxAgeInMinutes));
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
