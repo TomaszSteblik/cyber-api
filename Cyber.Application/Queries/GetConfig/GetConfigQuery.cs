@@ -5,5 +5,5 @@ namespace Cyber.Application.Queries.GetConfig;
 
 public class GetConfigQuery : IRequest<ConfigDto>
 {
-    
+
 }
