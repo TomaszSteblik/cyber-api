@@ -1,6 +1,7 @@
 using Cyber.Application.Commands.UpdateConfigAllowedLoginAttempts;
 using Cyber.Application.Commands.UpdateConfigFailedLoginTimeout;
 using Cyber.Application.Commands.UpdateConfigInactiveTimeout;
+using Cyber.Application.Queries.GetConfig;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,5 +36,11 @@ public class ConfigController : ControllerBase
     public async Task<IActionResult> SetFailedLoginTimeout([FromQuery] int value)
     {
         return Ok(await _mediator.Send(new UpdateConfigFailedLoginTimeoutCommand(value)));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetConfig()
+    {
+        return Ok(await _mediator.Send(new GetConfigQuery()));
     }
 }
