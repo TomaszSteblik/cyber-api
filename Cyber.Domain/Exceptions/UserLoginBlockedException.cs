@@ -8,6 +8,6 @@ public class UserLoginBlockedException : DomainException
     {
     }
 
-    public override HttpStatusCode StatusCode => HttpStatusCode.Unauthorized;
+    public override HttpStatusCode StatusCode => HttpStatusCode.Forbidden;
     public override string ErrorCode => "user_login_blocked_attempts";
 }
