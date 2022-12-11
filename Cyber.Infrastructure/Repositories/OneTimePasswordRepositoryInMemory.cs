@@ -3,12 +3,12 @@ using Cyber.Infrastructure.Exceptions;
 
 namespace Cyber.Infrastructure.Repositories;
 
-public class OneTimePasswordRepository : IOneTimePasswordRepository
+public class OneTimePasswordRepositoryInMemory : IOneTimePasswordRepository
 {
     private readonly Dictionary<Guid, int> _xValues;
 
 
-    public OneTimePasswordRepository()
+    public OneTimePasswordRepositoryInMemory()
     {
         _xValues = new Dictionary<Guid, int>();
     }
