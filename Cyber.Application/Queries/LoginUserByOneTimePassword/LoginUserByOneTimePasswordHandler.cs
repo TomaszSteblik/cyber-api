@@ -49,7 +49,7 @@ public class LoginUserByOneTimePasswordHandler : IRequestHandler<LoginUserByOneT
         var a = request.Login.Length;
         var serverPassword = _oneTimePasswordCalculatorService.CalculateOneTimePassword(x, a);
 
-        if (Math.Abs(serverPassword - request.Password) > 0.0001)
+        if (Math.Abs(serverPassword - request.Password) > 0.1)
         {
             await _userLoginAttemptsBlockService.RegisterFailedLoginAttempt(user.UserId);
             await _mediator.Send(new GenerateOneTimePasswordCommand(user.UserId), cancellationToken);
