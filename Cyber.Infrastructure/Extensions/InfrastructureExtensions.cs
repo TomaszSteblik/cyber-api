@@ -30,7 +30,7 @@ public static class InfrastructureExtensions
 
         serviceCollection.AddTransient<ExceptionToHttpMiddleware>();
 
-        serviceCollection.AddSingleton<IJwtService, JwtService>();
+        serviceCollection.AddScoped<IJwtService, JwtService>();
         serviceCollection.AddScoped<IMailingService, MailingService>();
 
         serviceCollection.AddScoped<IMailMessageFactory, MailMessageFactory>();
