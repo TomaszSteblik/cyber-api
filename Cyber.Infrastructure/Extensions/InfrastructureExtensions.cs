@@ -30,7 +30,7 @@ public static class InfrastructureExtensions
 
         serviceCollection.AddTransient<ExceptionToHttpMiddleware>();
 
-        serviceCollection.AddSingleton<IJwtService, JwtService>();
+        serviceCollection.AddScoped<IJwtService, JwtService>();
         serviceCollection.AddScoped<IMailingService, MailingService>();
 
         serviceCollection.AddScoped<IMailMessageFactory, MailMessageFactory>();
@@ -39,9 +39,9 @@ public static class InfrastructureExtensions
         serviceCollection.AddScoped<IPreviousPasswordsRepository, PreviousPasswordsRepository>();
         serviceCollection.AddScoped<IPasswordPoliciesRepository, PasswordPoliciesRepository>();
         serviceCollection.AddScoped<IUserPasswordExpirySettingRepository, UserPasswordExpirySettingRepository>();
-        serviceCollection.AddSingleton<ILoginAttemptsRepository, LoginAttemptsRepositoryInMemory>();
-        serviceCollection.AddSingleton<IConfigRepository, ConfigRepositoryInMemory>();
-        serviceCollection.AddSingleton<IOneTimePasswordRepository, OneTimePasswordRepository>();
+        serviceCollection.AddScoped<ILoginAttemptsRepository, LoginAttemptsRepository>();
+        serviceCollection.AddScoped<IOneTimePasswordRepository, OneTimePasswordRepository>();
+        serviceCollection.AddScoped<IConfigRepository, ConfigRepository>();
 
         serviceCollection.AddScoped<IMessageBroker, AzureServiceBusBroker>();
 

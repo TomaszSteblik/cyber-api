@@ -1,41 +1,39 @@
 using Cyber.Domain.Services;
+using Cyber.Infrastructure.DAOs;
 using Cyber.Infrastructure.Exceptions;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace Cyber.Infrastructure.Repositories;
 
-public class OneTimePasswordRepository : IOneTimePasswordRepository
+public class OneTimePasswordRepository : MongoRepositoryBase<OneTimePassword>, IOneTimePasswordRepository
 {
-    private readonly Dictionary<Guid, int> _xValues;
-
-
-    public OneTimePasswordRepository()
+    public OneTimePasswordRepository(IMongoClient mongoClient) : base(mongoClient)
     {
-        _xValues = new Dictionary<Guid, int>();
     }
 
-    public Task AddXValue(Guid userId, int xValue)
+    public async Task AddXValue(Guid userId, int xValue)
     {
-        var success = _xValues.TryAdd(userId, xValue);
-        if (success)
-            return Task.CompletedTask;
-
-        _xValues.Remove(userId);
-        _xValues.Add(userId, xValue);
-
-        return Task.CompletedTask;
+        var oneTimePassword = new OneTimePassword()
+        {
+            Id = new ObjectId(),
+            X = xValue,
+            UserId = userId
+        };
+        await GetCollection().InsertOneAsync(oneTimePassword);
     }
 
-    public Task RemoveXValue(Guid userId)
+    public async Task RemoveXValue(Guid userId)
     {
-        _xValues.Remove(userId);
-        return Task.CompletedTask;
+        await GetCollection().DeleteManyAsync(x => x.UserId == userId);
     }
 
-    public Task<int> GetXValue(Guid userId)
+    public async Task<int> GetXValue(Guid userId)
     {
-        var success = _xValues.TryGetValue(userId, out var value);
-        if (success)
-            return Task.FromResult(value);
-        throw new OneTimePasswordNotGeneratedException(userId);
+        var cursor = await GetCollection().FindAsync(x => x.UserId == userId);
+        var oneTimePassword = await cursor.FirstOrDefaultAsync();
+        if (oneTimePassword is null)
+            throw new OneTimePasswordNotGeneratedException(userId);
+        return oneTimePassword.X;
     }
 }

@@ -1,18 +1,17 @@
 using Cyber.Domain.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Cyber.Infrastructure.Services;
 
 public class OldLoginAttemptsRemovalHostedService : IHostedService
 {
-    private readonly ILoginAttemptsRepository _loginAttemptsRepository;
-    private readonly IConfigRepository _configRepository;
+    private readonly IServiceProvider _services;
     private Timer? _timer;
 
-    public OldLoginAttemptsRemovalHostedService(ILoginAttemptsRepository loginAttemptsRepository, IConfigRepository configRepository)
+    public OldLoginAttemptsRemovalHostedService(IServiceProvider services)
     {
-        _loginAttemptsRepository = loginAttemptsRepository;
-        _configRepository = configRepository;
+        _services = services;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -24,8 +23,11 @@ public class OldLoginAttemptsRemovalHostedService : IHostedService
 
     private async void RemoveOldLoginAttempts(object? state)
     {
-        var loginAttemptsMaxAgeInMinutes = await _configRepository.GetFailedLoginTimeoutInMinutes();
-        await _loginAttemptsRepository.RemoveAttemptsOlderThan(DateTime.Now.AddMinutes(-loginAttemptsMaxAgeInMinutes));
+        await using var scope = _services.CreateAsyncScope();
+        var scopedLoginAttemptsRepository = scope.ServiceProvider.GetRequiredService<ILoginAttemptsRepository>();
+        var scopedConfigRepository = scope.ServiceProvider.GetRequiredService<IConfigRepository>();
+        var loginAttemptsMaxAgeInMinutes = await scopedConfigRepository.GetFailedLoginTimeoutInMinutes();
+        await scopedLoginAttemptsRepository.RemoveAttemptsOlderThan(DateTime.Now.AddMinutes(-loginAttemptsMaxAgeInMinutes));
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
