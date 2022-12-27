@@ -28,6 +28,8 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
 
     public async Task<Unit> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
+        if (await _reCaptchaService.VerifyToken(request.RecaptchaToken))
+            throw new IncorrectCredentialsException("Incorrect captcha token");
         var user = await _usersRepository.GetUserById(request.UserId);
         if (user is null)
             throw new UserNotFoundException(request.UserId);
