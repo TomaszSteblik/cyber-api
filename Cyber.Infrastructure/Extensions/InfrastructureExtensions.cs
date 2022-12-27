@@ -4,6 +4,7 @@ using Cyber.Domain.Repositories;
 using Cyber.Domain.Services;
 using Cyber.Infrastructure.Factories;
 using Cyber.Infrastructure.Middlewares;
+using Cyber.Infrastructure.Options;
 using Cyber.Infrastructure.Repositories;
 using Cyber.Infrastructure.Services;
 using Microsoft.Extensions.Azure;
@@ -42,10 +43,14 @@ public static class InfrastructureExtensions
         serviceCollection.AddScoped<ILoginAttemptsRepository, LoginAttemptsRepository>();
         serviceCollection.AddScoped<IOneTimePasswordRepository, OneTimePasswordRepository>();
         serviceCollection.AddScoped<IConfigRepository, ConfigRepository>();
+        serviceCollection.AddScoped<IReCaptchaService, GoogleReCaptchaService>();
 
         serviceCollection.AddScoped<IMessageBroker, AzureServiceBusBroker>();
+        serviceCollection.AddHttpClient();
 
         serviceCollection.AddHostedService<OldLoginAttemptsRemovalHostedService>();
+
+        serviceCollection.AddOptions<CaptchaOptions>(CaptchaOptions.CaptchaSectionName);
 
         return serviceCollection;
     }

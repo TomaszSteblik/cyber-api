@@ -14,14 +14,16 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
     private readonly IEnumerable<IPasswordPolicy> _passwordPolicies;
     private readonly IPreviousPasswordsRepository _previousPasswordsRepository;
     private readonly IMessageBroker _messageBroker;
+    private readonly IReCaptchaService _reCaptchaService;
 
     public ChangePasswordHandler(IUsersRepository usersRepository, IEnumerable<IPasswordPolicy> passwordPolicies,
-        IPreviousPasswordsRepository previousPasswordsRepository, IMessageBroker messageBroker)
+        IPreviousPasswordsRepository previousPasswordsRepository, IMessageBroker messageBroker, IReCaptchaService reCaptchaService)
     {
         _usersRepository = usersRepository;
         _passwordPolicies = passwordPolicies;
         _previousPasswordsRepository = previousPasswordsRepository;
         _messageBroker = messageBroker;
+        _reCaptchaService = reCaptchaService;
     }
 
     public async Task<Unit> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
