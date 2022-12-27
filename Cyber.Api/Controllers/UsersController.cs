@@ -124,7 +124,7 @@ public class UsersController : ControllerBase
     updateUserDto.Password,
                 updateUserDto.UserId,
                 updateUserDto.OldPassword,
-                updateUserDto.RecaptchaToken));
+                updateUserDto.Recaptcha));
         var updatedUser = await _mediator.Send(new UpdateUserInformationsCommand(
             updateUserDto.UserId,
             updateUserDto.Username,
