@@ -77,7 +77,7 @@ public class UsersController : ControllerBase
         if (containsId is false)
             return BadRequest();
         return Ok(await _mediator.Send(new ChangePasswordCommand(changePasswordDto.NewPassword, userId,
-            changePasswordDto.OldPassword, changePasswordDto.RecaptchaToken)));
+            changePasswordDto.OldPassword, changePasswordDto.Recaptcha)));
     }
 
     [Authorize(Roles = "Admin")]
@@ -124,7 +124,7 @@ public class UsersController : ControllerBase
     updateUserDto.Password,
                 updateUserDto.UserId,
                 updateUserDto.OldPassword,
-                updateUserDto.RecaptchaToken));
+                updateUserDto.Recaptcha));
         var updatedUser = await _mediator.Send(new UpdateUserInformationsCommand(
             updateUserDto.UserId,
             updateUserDto.Username,
