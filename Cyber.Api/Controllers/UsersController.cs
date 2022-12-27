@@ -76,7 +76,7 @@ public class UsersController : ControllerBase
         var containsId = TryParse(User.Claims.First(x => x.Type == "UserId").Value, out var userId);
         if (containsId is false)
             return BadRequest();
-        return Ok(await _mediator.Send(new ChangePasswordCommand(changePasswordDto.NewPassword, userId, 
+        return Ok(await _mediator.Send(new ChangePasswordCommand(changePasswordDto.NewPassword, userId,
             changePasswordDto.OldPassword, changePasswordDto.RecaptchaToken)));
     }
 
@@ -175,7 +175,7 @@ public class UsersController : ControllerBase
     {
         return Ok(await _mediator.Send(new ResetPasswordCommand(email)));
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpPost("GenerateOneTimePassword")]
     [ProducesResponseType(StatusCodes.Status200OK)]
