@@ -39,7 +39,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> LoginUserByOneTimePassword([FromBody] LoginUserByOneTimePasswordDto loginUserDto)
     {
-        return Ok(await _mediator.Send(new LoginUserByOneTimePasswordQuery(loginUserDto.Login, loginUserDto.Password)));
+        return Ok(await _mediator.Send(new LoginUserByOneTimePasswordQuery(loginUserDto.Login, loginUserDto.Password, loginUserDto.CaptchaChallengeId)));
     }
 
     [AllowAnonymous]
@@ -48,7 +48,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> LoginUser([FromBody] LoginUserDto loginUserDto)
     {
-        return Ok(await _mediator.Send(new LoginUserRequest(loginUserDto.Login, loginUserDto.Password)));
+        return Ok(await _mediator.Send(new LoginUserRequest(loginUserDto.Login, loginUserDto.Password, loginUserDto.CaptchaChallengeId)));
     }
 
     [HttpPost("Logout")]

@@ -14,20 +14,25 @@ internal class LoginUserHandler : IRequestHandler<LoginUserRequest, string>
     private readonly IUserPasswordExpirySettingRepository _userPasswordExpirySettingRepository;
     private readonly IMessageBroker _messageBroker;
     private readonly IUserLoginAttemptsBlockService _userLoginAttemptsBlockService;
+    private readonly ICaptchaService _captchaService;
 
     public LoginUserHandler(IUsersRepository usersRepository, IJwtService jwtService,
         IUserPasswordExpirySettingRepository userPasswordExpirySettingRepository, IMessageBroker messageBroker,
-        IUserLoginAttemptsBlockService userLoginAttemptsBlockService)
+        IUserLoginAttemptsBlockService userLoginAttemptsBlockService, ICaptchaService captchaService)
     {
         _usersRepository = usersRepository;
         _jwtService = jwtService;
         _userPasswordExpirySettingRepository = userPasswordExpirySettingRepository;
         _messageBroker = messageBroker;
         _userLoginAttemptsBlockService = userLoginAttemptsBlockService;
+        _captchaService = captchaService;
     }
 
     public async Task<string> Handle(LoginUserRequest request, CancellationToken cancellationToken)
     {
+        if (!await _captchaService.VerifyPuzzleCaptchaChallenge(request.CaptchaChallengeId))
+            throw new CaptchaChallengeFailedException("Failed puzzle captcha");
+
         //find user by email
         var user = await _usersRepository.GetUserByUsername(request.Login);
         if (user is null)
