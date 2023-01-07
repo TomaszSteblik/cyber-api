@@ -30,7 +30,7 @@ public class CaptchaService : ICaptchaService
     {
         using var client = _httpClientFactory.CreateClient();
 
-        var response = await client.GetFromJsonAsync<PuzzleCaptchaResponseDto>($"{GoogleApiEndpoint}?id={challengeId}");
+        var response = await client.GetFromJsonAsync<PuzzleCaptchaResponseDto>($"{CyberCaptchaApiEndpoint}?id={challengeId}");
         if (response is null)
             return false;
 
