@@ -35,6 +35,6 @@ public class CaptchaService : ICaptchaService
             return false;
 
         var timeOfChallenge = DateTimeOffset.FromUnixTimeSeconds(response.Timestamp);
-        return response.Success && timeOfChallenge.Date.AddMinutes(5) <= DateTime.Now;
+        return response.Success && timeOfChallenge.Date.AddMinutes(5) <= DateTime.UtcNow;
     }
 }
