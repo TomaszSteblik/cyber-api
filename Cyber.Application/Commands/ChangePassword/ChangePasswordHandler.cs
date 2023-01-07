@@ -14,21 +14,21 @@ internal class ChangePasswordHandler : IRequestHandler<ChangePasswordCommand>
     private readonly IEnumerable<IPasswordPolicy> _passwordPolicies;
     private readonly IPreviousPasswordsRepository _previousPasswordsRepository;
     private readonly IMessageBroker _messageBroker;
-    private readonly IReCaptchaService _reCaptchaService;
+    private readonly ICaptchaService _captchaService;
 
     public ChangePasswordHandler(IUsersRepository usersRepository, IEnumerable<IPasswordPolicy> passwordPolicies,
-        IPreviousPasswordsRepository previousPasswordsRepository, IMessageBroker messageBroker, IReCaptchaService reCaptchaService)
+        IPreviousPasswordsRepository previousPasswordsRepository, IMessageBroker messageBroker, ICaptchaService captchaService)
     {
         _usersRepository = usersRepository;
         _passwordPolicies = passwordPolicies;
         _previousPasswordsRepository = previousPasswordsRepository;
         _messageBroker = messageBroker;
-        _reCaptchaService = reCaptchaService;
+        _captchaService = captchaService;
     }
 
     public async Task<Unit> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
     {
-        if (await _reCaptchaService.VerifyToken(request.RecaptchaToken))
+        if (await _captchaService.VerifyReCaptchaToken(request.RecaptchaToken))
             throw new IncorrectCredentialsException("Incorrect captcha token");
         var user = await _usersRepository.GetUserById(request.UserId);
         if (user is null)

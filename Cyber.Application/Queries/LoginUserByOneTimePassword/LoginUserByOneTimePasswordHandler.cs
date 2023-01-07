@@ -18,11 +18,12 @@ public class LoginUserByOneTimePasswordHandler : IRequestHandler<LoginUserByOneT
     private readonly IOneTimePasswordRepository _oneTimePasswordRepository;
     private readonly IOneTimePasswordCalculatorService _oneTimePasswordCalculatorService;
     private readonly IMediator _mediator;
+    private readonly ICaptchaService _captchaService;
 
     public LoginUserByOneTimePasswordHandler(IUserLoginAttemptsBlockService userLoginAttemptsBlockService,
         IMessageBroker messageBroker, IJwtService jwtService, IUsersRepository usersRepository,
         IOneTimePasswordRepository oneTimePasswordRepository, IOneTimePasswordCalculatorService oneTimePasswordCalculatorService,
-        IMediator mediator)
+        IMediator mediator, ICaptchaService captchaService)
     {
         _userLoginAttemptsBlockService = userLoginAttemptsBlockService;
         _messageBroker = messageBroker;
@@ -31,10 +32,14 @@ public class LoginUserByOneTimePasswordHandler : IRequestHandler<LoginUserByOneT
         _oneTimePasswordRepository = oneTimePasswordRepository;
         _oneTimePasswordCalculatorService = oneTimePasswordCalculatorService;
         _mediator = mediator;
+        _captchaService = captchaService;
     }
 
     public async Task<string> Handle(LoginUserByOneTimePasswordQuery request, CancellationToken cancellationToken)
     {
+        if (!await _captchaService.VerifyPuzzleCaptchaChallenge(request.CaptchaChallengeId))
+            throw new CaptchaChallengeFailedException("Failed puzzle captcha");
+        
         //find user by email
         var user = await _usersRepository.GetUserByUsername(request.Login);
         if (user is null)

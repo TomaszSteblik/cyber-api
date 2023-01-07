@@ -43,7 +43,7 @@ public static class InfrastructureExtensions
         serviceCollection.AddScoped<ILoginAttemptsRepository, LoginAttemptsRepository>();
         serviceCollection.AddScoped<IOneTimePasswordRepository, OneTimePasswordRepository>();
         serviceCollection.AddScoped<IConfigRepository, ConfigRepository>();
-        serviceCollection.AddScoped<IReCaptchaService, GoogleReCaptchaService>();
+        serviceCollection.AddScoped<ICaptchaService, CaptchaService>();
 
         serviceCollection.AddScoped<IMessageBroker, AzureServiceBusBroker>();
         serviceCollection.AddHttpClient();
