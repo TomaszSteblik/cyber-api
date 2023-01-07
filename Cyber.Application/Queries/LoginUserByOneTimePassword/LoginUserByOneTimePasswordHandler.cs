@@ -39,7 +39,7 @@ public class LoginUserByOneTimePasswordHandler : IRequestHandler<LoginUserByOneT
     {
         if (!await _captchaService.VerifyPuzzleCaptchaChallenge(request.CaptchaChallengeId))
             throw new CaptchaChallengeFailedException("Failed puzzle captcha");
-        
+
         //find user by email
         var user = await _usersRepository.GetUserByUsername(request.Login);
         if (user is null)

@@ -33,7 +33,7 @@ public class CaptchaService : ICaptchaService
         var response = await client.GetFromJsonAsync<PuzzleCaptchaResponseDto>($"{GoogleApiEndpoint}?id={challengeId}");
         if (response is null)
             return false;
-        
+
         var timeOfChallenge = DateTimeOffset.FromUnixTimeSeconds(response.Timestamp);
         return response.Success && timeOfChallenge.Date.AddMinutes(5) <= DateTime.Now;
     }
